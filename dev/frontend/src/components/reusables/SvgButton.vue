@@ -16,7 +16,7 @@
           :filepath="svgSrc"
           :fill="getTextColor"
           :stroke="getTextColor"
-          :width="'auto'"
+          :width="svgWidth"
           :height="svgHeight"
         />
       </div>
@@ -48,6 +48,7 @@ export default {
     boxShadow: String,
     paddingTop: String,
     svgWrapperHeight: String,
+    svgWidth: String,
     svgHeight: String,
     svgLabelGap: String,
     labelWrapperHeight: String,

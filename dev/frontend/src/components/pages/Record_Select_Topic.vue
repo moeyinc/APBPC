@@ -3,10 +3,12 @@
 ================================================== -->
 <template>
   <div class="page-wrapper">
+    <page-aside
+      :has-back-button="true"
+      :back-to="'home'"
+    />
     <header>
-      <div class="header-inner">
-        <h2>RECORD YOUR OWN STORY</h2>
-      </div>
+      <h2>RECORD YOUR OWN STORY</h2>
     </header>
     <hr class="top-divider"/>
     <main>
@@ -16,27 +18,31 @@
             Select from the topics below to record your own thoughts and opinions on the Pine Bush.
           </p>
         </div>
+        <div class="text-button-container">
+          <text-button
+            v-for="topic in getTopics"
+            :key="topic.id"
+            class="text-button"
+            :width="'680px'"
+            :height="'170px'"
+            :border-radius="'40px'"
+            :padding="'0 50px'"
+            :font="'40px Arquitecta'"
+            :letter-spacing="'1px'"
+            :text-align="'left'"
+            :text-content="topic.q"
+            :regular-bg-color="'#47673b'"
+            :regular-text-color="'#efdfd4'"
+            :active-bg-color="'#efdfd4'"
+            :active-text-color="'#47673b'"
+            @clicked="setTopic(topic.id, topic.q)"
+           />
+        </div>
 
       </div>
     </main>
     <hr class="bottom-divider"/>
     <footer>
-      <div class="container">
-        <text-button
-          class="text-button"
-          :width="'350px'"
-          :height="'50px'"
-          :border-radius="'15px'"
-          :font="'bold 30px Arquitecta'"
-          :letter-spacing="'3px'"
-          :text-content="'SEND US AN EMAIL!'"
-          :regular-bg-color="'#47673b'"
-          :regular-text-color="'#efdfd4'"
-          :active-bg-color="'#efdfd4'"
-          :active-text-color="'#47673b'"
-          @clicked=""
-         />
-      </div>
     </footer>
   </div>
 </template>
@@ -46,12 +52,24 @@
  Vue Script
 ================================================== -->
 <script>
-import SvgButton from '@/components/reusables/SvgButton'
+import PageAside from '@/components/page-components/PageAside'
 import TextButton from '@/components/reusables/TextButton'
+import topics from '../../../static/topics.js'
 export default {
   name: 'record-select-topics',
   components: {
-    SvgButton, TextButton
+    PageAside, TextButton
+  },
+  computed: {
+    getTopics () {
+      return topics
+    }
+  },
+  methods: {
+    setTopic (topicId, question) {
+      this.$store.commit('setTopic', {topicId: topicId, question: question})
+      this.jumpTo('recording-start')
+    }
   }
 }
 </script>
@@ -69,8 +87,8 @@ export default {
 header {
   position: absolute;
   top: 0px;
-  left: 100px;
-  width: 1720px;
+  left: 200px;
+  width: 1520px;
   height: 230px;
   /* background-color: darkgreen; */
 }
@@ -87,73 +105,57 @@ hr.top-divider {
   background-color: #efdfd4;
   position: absolute;
   top: 135px;
-  left: 100px;
-  width: 1720px;
+  left: 200px;
+  width: 1520px;
 }
 
 main {
   position: absolute;
   top: 135px;
-  left: 100px;
-  width: 1720px;
+  left: 200px;
+  width: 1520px;
   height: 745px;
   /* background-color: brown; */
 }
 
 main div.main-inner {
-  padding: 60px;
+  padding: 50px;
 }
 
 main p.lead-text {
   font-size: 40px;
   line-height: 1.3em;
   text-align: center;
+  margin-bottom: 50px;
 }
 
-main .svg-button-container {
-  margin-top: 40px;
-  width: 100%;
-  text-align: center;
+main .text-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-main .svg-button {
-  display: inline-block;
-  margin: 0 60px;
+main .text-button {
+  margin-bottom: 50px;
 }
 
 hr.bottom-divider {
   background-color: #efdfd4;
   position: absolute;
-  top: 880px;
-  left: 100px;
-  width: 1720px;
+  top: 960px;
+  left: 200px;
+  width: 1520px;
 }
 
 footer {
   position: absolute;
-  top: 880px;
-  left: 100px;
+  top: 980px;
+  left: 200px;
   height: 200px;
-  width: 1720px;
+  width: 1520px;
   text-align: center;
   padding: 70px;
   /* background-color: purple; */
-}
-
-footer .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-footer .footer-text {
-  display: inline-block;
-  font-size: 40px;
-  margin-right: 40px;
-}
-
-footer .text-button {
-  display: inline-block;
 }
 
 </style>

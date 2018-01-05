@@ -11,7 +11,7 @@
       <div class="main-inner">
         <div>
           <p class="lead-text">
-            Our community values the Pine Bush for different reasons. We encourage you to contribute your own story, or listen to the stories of others who enjoy the Pine Bush and what value it providers them.
+            Our community values the Pine Bush for many reasons. We encourage you to contribute your own story, or listen to the stories of others who enjoy the Pine Bush and what value it provides them.
           </p>
         </div>
         <div class="svg-button-container">
@@ -25,6 +25,7 @@
             :svg-label-gap="'10px'"
             :label-wrapper-height="'100px'"
             :padding-bottom="'40px'"
+            :svg-width="'auto'"
             :svg-height="'140px'"
             :svg-src="require('@/assets/images/recording.svg')"
             :label-height="'100px'"
@@ -49,6 +50,7 @@
              :svg-label-gap="'10px'"
              :label-wrapper-height="'100px'"
              :padding-bottom="'40px'"
+             :svg-width="'auto'"
              :svg-height="'120px'"
              :svg-src="require('@/assets/images/playback.svg')"
              :label-height="'100px'"
@@ -61,7 +63,7 @@
              :active-bg-color="'#efdfd4'"
              :active-text-color="'#47673b'"
              :border-radius="'50px'"
-             @clicked=""
+             @clicked="jumpTo('listening-topics')"
             />
         </div>
       </div>
@@ -102,6 +104,9 @@ export default {
   name: 'home',
   components: {
     SvgButton, TextButton
+  },
+  created () {
+    this.$store.commit('resetTopic')
   }
 }
 </script>
@@ -119,8 +124,8 @@ export default {
 header {
   position: absolute;
   top: 0px;
-  left: 100px;
-  width: 1720px;
+  left: 200px;
+  width: 1520px;
   height: 230px;
   /* background-color: darkgreen; */
 }
@@ -135,31 +140,31 @@ hr.top-divider {
   background-color: #efdfd4;
   position: absolute;
   top: 230px;
-  left: 100px;
-  width: 1720px;
+  left: 200px;
+  width: 1520px;
 }
 
 main {
   position: absolute;
   top: 230px;
-  left: 100px;
-  width: 1720px;
+  left: 200px;
+  width: 1520px;
   height: 650px;
   /* background-color: brown; */
 }
 
 main div.main-inner {
-  padding: 60px;
+  padding: 50px;
 }
 
 main p.lead-text {
   font-size: 40px;
   line-height: 1.3em;
   text-align: center;
+  margin-bottom: 50px;
 }
 
 main .svg-button-container {
-  margin-top: 40px;
   width: 100%;
   text-align: center;
 }
@@ -173,16 +178,16 @@ hr.bottom-divider {
   background-color: #efdfd4;
   position: absolute;
   top: 880px;
-  left: 100px;
-  width: 1720px;
+  left: 200px;
+  width: 1520px;
 }
 
 footer {
   position: absolute;
   top: 880px;
-  left: 100px;
+  left: 200px;
   height: 200px;
-  width: 1720px;
+  width: 1520px;
   text-align: center;
   padding: 70px;
   /* background-color: purple; */

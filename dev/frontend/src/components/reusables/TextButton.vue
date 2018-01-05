@@ -34,6 +34,7 @@ export default {
     border: String,
     borderRadius: String,
     boxShadow: String,
+    padding: String,
     font: String,
     lineHeight: String,
     letterSpacing: String,
@@ -57,6 +58,7 @@ export default {
         border: this.border,
         borderRadius: this.borderRadius,
         boxShadow: this.boxShadow,
+        padding: this.padding,
         backgroundColor: this.getBgColor,
         textAlign: 'center'
       }
