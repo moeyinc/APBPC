@@ -86,7 +86,7 @@
           :regular-text-color="'#efdfd4'"
           :active-bg-color="'#efdfd4'"
           :active-text-color="'#47673b'"
-          @clicked=""
+          @clicked="jumpTo('send-us-your-story')"
          />
       </div>
     </footer>

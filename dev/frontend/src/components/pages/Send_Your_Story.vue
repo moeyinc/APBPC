@@ -14,15 +14,18 @@
     <main>
       <div class="main-inner">
         <div>
-          <p class="lead-text">
-            You can send us your story via email. Ask your parents to send your video to info@albanypinebush.com.
+          <p class="lead-text font-hoefler-regular">
+            You can send us your story via email.<br />
+            Ask your parents to send your video to <span>info@albanypinebush.com</span>.
           </p>
-          <p>
-            Please keep your videos under three minutes.
-          </p>
-          <p>
-            If the file size of your video is too big to send, you may use cloud services such as Google Drive or Dropbox.
-          </p>
+          <ul class="notes">
+            <li>
+              Please keep your videos under three minutes.
+            </li>
+            <li>
+              If the file size of your video is too big to send, you may use cloud services such as Google Drive or Dropbox.
+            </li>
+          </ul>
         </div>
 
       </div>
@@ -94,13 +97,27 @@ main {
 
 main div.main-inner {
   padding: 50px;
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-main p.lead-text {
+main .lead-text {
+  list-style-type: disc;
   font-size: 40px;
   line-height: 1.3em;
   text-align: center;
   margin-bottom: 50px;
+}
+
+main .notes {
+  list-style-type: disc;
+  width: 50%;
+  margin: 0 auto;
+  font-size: 25px;
+  text-align: left;
 }
 
 hr.bottom-divider {
