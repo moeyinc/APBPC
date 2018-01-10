@@ -2,8 +2,8 @@
  state
 ================================================== */
 const state = {
-  selectedTopicId: '',
-  selectedTopicQuestion: ''
+  selectedTopic: '',
+  uploadedFileURL: ''
 }
 
 /* =================================================
@@ -12,13 +12,15 @@ const state = {
 const mutations = {
   resetTopic (state) {
     console.log('resetting the selected topic')
-    state.selectedTopicId = ''
-    state.selectedTopicQuestion = ''
+    state.selectedTopic = ''
   },
-  setTopic (state, {topicId, question}) {
-    console.log('set selectedTopicId: ', topicId)
-    state.selectedTopicId = topicId
-    state.selectedTopicQuestion = question
+  setTopic (state, {topic}) {
+    console.log('set selectedTopic: ', topic)
+    state.selectedTopic = topic
+  },
+  setFileURL (state, {fileURL}) {
+    console.log('set uploadedFileURL', fileURL)
+    state.uploadedFileURL = fileURL
   }
 }
 

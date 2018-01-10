@@ -20,8 +20,8 @@
         </div>
         <div class="text-button-container">
           <text-button
-            v-for="topic in getTopics"
-            :key="topic.id"
+            v-for="(topic, index) in getTopics"
+            :key="index"
             class="text-button"
             :width="'680px'"
             :height="'170px'"
@@ -30,12 +30,12 @@
             :font="'40px Arquitecta'"
             :letter-spacing="'1px'"
             :text-align="'left'"
-            :text-content="topic.q"
+            :text-content="topic"
             :regular-bg-color="'#47673b'"
             :regular-text-color="'#efdfd4'"
             :active-bg-color="'#efdfd4'"
             :active-text-color="'#47673b'"
-            @clicked="setTopic(topic.id, topic.q)"
+            @clicked="setTopic(topic)"
            />
         </div>
 
@@ -66,8 +66,8 @@ export default {
     }
   },
   methods: {
-    setTopic (topicId, question) {
-      this.$store.commit('setTopic', {topicId: topicId, question: question})
+    setTopic (topic) {
+      this.$store.commit('setTopic', {topic: topic})
       this.jumpTo('recording-start')
     }
   }

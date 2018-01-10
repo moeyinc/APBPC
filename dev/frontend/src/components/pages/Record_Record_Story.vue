@@ -16,7 +16,7 @@
         <div>
           <h5 class="selected-topic">- SELECTED TOPIC -</h5>
           <p class="question-text">
-            {{ $store.state.selectedTopicQuestion }}
+            {{ $store.state.selectedTopic }}
           </p>
         </div>
         <div class="recording-element-container">
@@ -30,10 +30,10 @@
                 :is-recording="isRecording"
                 :id="'recording-timer'"
                 :diameter="300"
-                :outline-color="'#efdfd4'"
+                :outline-color="'white'"
                 :indicator-color="'red'"
                 :circle-fill-color="'black'"
-                :text-color="'#efdfd4'"
+                :text-color="'white'"
                 :outline-width="30"
                 :max-time="getRecordingMaxLength"
                 :label-content="'Time Remaining'"
@@ -61,21 +61,38 @@
                   :active-text-color="'red'"
                   @clicked="startRecording()"
                  />
-                <text-button
-                 v-show="isRecording"
-                 class="text-button"
-                 :width="'300px'"
-                 :height="'120px'"
-                 :border-radius="'20px'"
-                 :font="'bold 40px Arquitecta'"
-                 :letter-spacing="'3px'"
-                 :text-content="'STOP<br/>RECORDING'"
-                 :regular-bg-color="'#47673b'"
-                 :regular-text-color="'#efdfd4'"
-                 :active-bg-color="'#efdfd4'"
-                 :active-text-color="'#47673b'"
-                 @clicked="stopRecording()"
-                />
+                 <div class="recording-button-container">
+                   <text-button
+                     v-show="isRecording"
+                     class="text-button"
+                     :width="'160px'"
+                     :height="'80px'"
+                     :border-radius="'14px'"
+                     :font="'bold 25px Arquitecta'"
+                     :letter-spacing="'3px'"
+                     :text-content="'OOPS!<br/>RESTART'"
+                     :regular-bg-color="'#47673b'"
+                     :regular-text-color="'#efdfd4'"
+                     :active-bg-color="'#efdfd4'"
+                     :active-text-color="'#47673b'"
+                     @clicked="reset()"
+                   />
+                   <text-button
+                    v-show="isRecording"
+                    class="text-button"
+                    :width="'250px'"
+                    :height="'120px'"
+                    :border-radius="'20px'"
+                    :font="'bold 40px Arquitecta'"
+                    :letter-spacing="'3px'"
+                    :text-content="'FINISH'"
+                    :regular-bg-color="'red'"
+                    :regular-text-color="'#efdfd4'"
+                    :active-bg-color="'#efdfd4'"
+                    :active-text-color="'red'"
+                    @clicked="stopRecording()"
+                   />
+                 </div>
               </div>
             </div>
           </div>
@@ -152,15 +169,15 @@ export default {
 
       const D = this
       this.xhr(CONSTANTS.VIDEO_SERVER_URL, file, (responseText) => {
-        // let fileURL = JSON.parse(responseText).fileURL
-        //
-        // console.info('fileURL', fileURL)
+        let fileURL = JSON.parse(responseText).fileURL
+
+        console.info('fileURL', fileURL)
+        D.$store.commit('setFileURL', {fileURL: fileURL})
         // D.videoElement.src = fileURL
         // D.videoElement.play()
         // D.videoElement.muted = false
         // D.videoElement.controls = true // NEEDS TO BE FALSE
 
-        // document.querySelector('#footer-h2').innerHTML = '<a href="' + videoElement.src + '">' + videoElement.src + '</a>';
         D.jumpTo('recording-finish')
       })
 
@@ -189,6 +206,7 @@ export default {
 
       let formData = new FormData()
       formData.append('file', data)
+      formData.append('topic', this.$store.state.selectedTopic)
       request.send(formData)
     },
     /* generating random string */
@@ -227,12 +245,20 @@ export default {
     },
     /* stop recording */
     stopRecording () {
-      this.isRecording = false // NEED TO BE REMOVED
-      this.recorder.stopRecording(this.postFiles)
+      this.isRecording = false
+      if (this.$store.state.selectedTopic) {
+        this.recorder.stopRecording(this.postFiles)
+      } else {
+        alert('Topic is not selected!')
+      }
     },
     timeOver () {
       console.log('time over!!!')
       this.stopRecording()
+    },
+    reset () {
+      this.recorder.reset()
+      this.isRecording = false
     }
   }
 }
@@ -358,6 +384,16 @@ main .under-timer-inner {
   left: 50%;
   transform: translate(-50%, -50%);
   margin: 0 auto;
+}
+
+.text-button {
+  margin: 0 10px;
+}
+
+main .recording-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 hr.bottom-divider {
