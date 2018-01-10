@@ -28,6 +28,8 @@ module.exports = {
     // disable key spacing
     'key-spacing': 0,
     // disable quatation alert
-    'quotes': [0, 'double']
+    'quotes': [0, 'double'],
+    // disable constructor function with a capital letter
+    'new-cap': 0
   }
 }
