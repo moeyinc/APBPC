@@ -1,3 +1,5 @@
+"use strict";
+
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
@@ -7,7 +9,7 @@ var formidable = require('formidable');
 var util = require('util');
 var path = require('path');
 
-/* POST users listing. */
+/* POST a video file */
 router.post('/upload-video', function(req, res, next) {
   var form = new formidable.IncomingForm();
   var dir = '/uploads/';
@@ -30,10 +32,10 @@ router.post('/upload-video', function(req, res, next) {
 
     // make a dir for the topic if there is no folders with the name
     topic = sanitize(topic).replace(/\ /g, '_')
-    var dirPath = './uploads/' + topic
-    if (!fs.existsSync(dirPath)) {
+    var folderPath = './uploads/' + topic
+    if (!fs.existsSync(folderPath)) {
       console.log('creating dir')
-      fs.mkdirSync(dirPath)
+      fs.mkdirSync(folderPath)
     }
 
     // rename the file
@@ -45,16 +47,47 @@ router.post('/upload-video', function(req, res, next) {
       console.error('uploaded file cannot be found')
     }
 
-    // return response to client
+    // respond to client
     var fileURL = 'http://' + req.headers.host + '/uploads/' + topic + '/' + fileName;
     console.log('fileURL: ', fileURL);
     res.json({fileURL: fileURL})
   });
 });
 
-router.get('/download-videos', function(req, res, next) {
-  console.log('query: ', req.query.id)
-  res.send('respond with a resource');
+/* GET a list of videos with the topic */
+router.post('/download-videos', function(req, res, next) {
+  var topic = req.body.topic
+
+  // check if the request has a topic field
+  if (!topic) {
+    console.error('topic was not specified')
+    res.status(400)
+    res.send('topic was not specified')
+    return
+  }
+
+  // check if there is a folder with the specific name of the topic
+  topic = sanitize(topic).replace(/\ /g, '_')
+  var folderPath = './uploads/' + topic
+  if (!fs.existsSync(folderPath)) {
+    console.error('no folder found with the given topic name')
+    res.status(400)
+    res.send('no folder found with the given topic name')
+    return
+  }
+
+  var fileURLs = []
+  // get all files under the folder
+  fs.readdir(folderPath, (err, files) => {
+    files.forEach(file => {
+      // var fileURL = 'http://' + req.headers.host + '/uploads/' + topic + '/' + file;
+      var fileURL = 'http://' + req.headers.host + '/' + topic + '/' + file;
+      fileURLs.push(fileURL)
+    })
+    // respond to client
+    console.log('fileURLs: ', fileURLs);
+    res.json({fileURLs: fileURLs});
+  })
 });
 
 module.exports = router;

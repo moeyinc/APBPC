@@ -3,7 +3,7 @@
 ================================================== -->
 <template>
   <div id="app" :style="{width: monitorWidth + 'px', height: monitorHeight + 'px'}">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -17,7 +17,8 @@ export default {
   data () {
     return {
       monitorWidth: 1920,
-      monitorHeight: 1080
+      monitorHeight: 1080,
+      showNextView: false
     }
   },
   mounted () {
@@ -138,5 +139,12 @@ html, body, #app {
 hr {
   -webkit-margin-before: 0.0em;
   -webkit-margin-after: 0.0em;
+}
+
+.page-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  overflow: hidden;
 }
 </style>

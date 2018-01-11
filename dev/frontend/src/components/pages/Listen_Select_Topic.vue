@@ -68,7 +68,7 @@ export default {
   methods: {
     setTopic (topic) {
       this.$store.commit('setTopic', {topic: topic})
-      this.jumpTo('listening-watch')
+      this.jumpTo('listening-watch', {dir: 'right'})
     }
   }
 }
@@ -79,11 +79,6 @@ export default {
  Vue Style
 ================================================== -->
 <style scoped>
-.page-wrapper {
-  height: 100%;
-  position: relative;
-}
-
 header {
   position: absolute;
   top: 0px;

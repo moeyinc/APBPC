@@ -1,7 +1,7 @@
 export default {
   methods: {
-    jumpTo (destination) {
-      this.$router.push({ name: destination })
+    jumpTo (destination, params) {
+      this.$router.push({ name: destination, params: params })
     }
   }
 }

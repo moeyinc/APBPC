@@ -56,11 +56,6 @@ export default {
  Vue Style
 ================================================== -->
 <style scoped>
-.page-wrapper {
-  height: 100%;
-  position: relative;
-}
-
 header {
   position: absolute;
   top: 0px;

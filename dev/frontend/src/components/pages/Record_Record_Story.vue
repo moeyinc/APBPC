@@ -168,7 +168,7 @@ export default {
       // this.videoElement.poster = require('@/assets/images/ajax-loader.gif')
 
       const D = this
-      this.xhr(CONSTANTS.VIDEO_SERVER_URL, file, (responseText) => {
+      this.xhr(CONSTANTS.VIDEO_SERVER_HOST + CONSTANTS.UPLOAD_API_PATH, file, (responseText) => {
         let fileURL = JSON.parse(responseText).fileURL
 
         console.info('fileURL', fileURL)
@@ -178,7 +178,7 @@ export default {
         // D.videoElement.muted = false
         // D.videoElement.controls = true // NEEDS TO BE FALSE
 
-        D.jumpTo('recording-finish')
+        D.jumpTo('recording-finish', {dir: 'right'})
       })
 
       // if (this.mediaStream) this.mediaStream.stop()
@@ -269,11 +269,6 @@ export default {
  Vue Style
 ================================================== -->
 <style scoped>
-.page-wrapper {
-  height: 100%;
-  position: relative;
-}
-
 header {
   position: absolute;
   top: 0px;
@@ -346,7 +341,7 @@ main .video-wrapper {
 main video {
   width: 100%;
   height: 100%;
-
+  background-color: black;
   /* box-sizing: content-box;
   border-style: solid;
   border-width: 6px;

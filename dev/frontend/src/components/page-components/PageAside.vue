@@ -15,7 +15,7 @@
         :regular-text-color="'#efdfd4'"
         :active-bg-color="''"
         :active-text-color="'#47673b'"
-        @clicked="jumpTo('home')"
+        @clicked="jumpTo('home', {dir: 'home'})"
        />
     </div>
     <div class="back-button-wrapper" v-if="hasBackButton">
@@ -30,7 +30,7 @@
         :regular-text-color="'#efdfd4'"
         :active-bg-color="''"
         :active-text-color="'#47673b'"
-        @clicked="jumpTo(backTo)"
+        @clicked="jumpTo(backTo, {dir: 'left'})"
        />
     </div>
   </aside>

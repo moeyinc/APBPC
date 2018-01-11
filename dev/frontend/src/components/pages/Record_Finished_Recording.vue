@@ -28,7 +28,7 @@
             :regular-text-color="'#efdfd4'"
             :active-bg-color="'#efdfd4'"
             :active-text-color="'#47673b'"
-            @clicked="jumpTo('home')"
+            @clicked="jumpTo('home', {dir: 'home'})"
            />
         </div>
       </div>
@@ -59,11 +59,6 @@ export default {
  Vue Style
 ================================================== -->
 <style scoped>
-.page-wrapper {
-  height: 100%;
-  position: relative;
-}
-
 header {
   position: absolute;
   top: 0px;

@@ -38,7 +38,7 @@
             :active-bg-color="'#efdfd4'"
             :active-text-color="'#47673b'"
             :border-radius="'50px'"
-            @clicked="jumpTo('recording-topics')"
+            @clicked="jumpTo('recording-topics', {dir: 'right'})"
            />
            <svg-button
              class="svg-button"
@@ -63,7 +63,7 @@
              :active-bg-color="'#efdfd4'"
              :active-text-color="'#47673b'"
              :border-radius="'50px'"
-             @clicked="jumpTo('listening-topics')"
+             @clicked="jumpTo('listening-topics', {dir: 'right'})"
             />
         </div>
       </div>
@@ -86,7 +86,7 @@
           :regular-text-color="'#efdfd4'"
           :active-bg-color="'#efdfd4'"
           :active-text-color="'#47673b'"
-          @clicked="jumpTo('send-us-your-story')"
+          @clicked="jumpTo('send-us-your-story'), {dir: 'right'}"
          />
       </div>
     </footer>
@@ -116,11 +116,6 @@ export default {
  Vue Style
 ================================================== -->
 <style scoped>
-.page-wrapper {
-  height: 100%;
-  position: relative;
-}
-
 header {
   position: absolute;
   top: 0px;
