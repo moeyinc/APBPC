@@ -3,16 +3,7 @@
 ================================================== -->
 <template>
   <div class="page-wrapper">
-    <transition :name="transitionName"
-    @before-enter="beforeEnter"
-    @enter="enter"
-    @after-enter="afterEnter"
-    @enter-cancelled="enterCancelled"
-    @before-leave="beforeLeave"
-    @leave="leave"
-    @after-leave="afterLeave"
-    @leave-cancelled="leaveCancelled"
-    >
+    <transition :name="transitionName">
       <router-view class="child-view"/>
     </transition>
   </div>
@@ -31,7 +22,6 @@ export default {
   },
   beforeRouteUpdate (to, from, next) {
     let dir = to.params.dir
-    console.log(dir)
     switch (dir) {
       case 'left':
         this.transitionName = 'slide-right'
@@ -50,33 +40,6 @@ export default {
   computed: {
     getTransitionName () {
       return 'slide-left'
-    }
-  },
-  methods: {
-    beforeEnter () {
-      console.log('----------------')
-      console.log('on before enter')
-    },
-    enter () {
-      console.log('on enter')
-    },
-    afterEnter () {
-      console.log('on after enter')
-    },
-    enterCancelled () {
-      console.log('on enter cancelled')
-    },
-    beforeLeave () {
-      console.log('on before leave')
-    },
-    leave () {
-      console.log('on leave')
-    },
-    afterLeave () {
-      console.log('on after leave')
-    },
-    leaveCancelled () {
-      console.log('on leave cancelled')
     }
   }
 }

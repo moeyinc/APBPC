@@ -13,14 +13,19 @@
     <hr class="top-divider"/>
     <main>
       <div class="main-inner">
-        <div>
+        <div class="selected-topic-wrapper">
           <h5 class="selected-topic">- SELECTED TOPIC -</h5>
-          <p class="question-text">
+          <p class="question-text" :style="{fontSize: questionTextFontSize + 'px'}">
             {{ $store.state.selectedTopic }}
           </p>
         </div>
         <div class="recording-element-container">
           <div class="video-wrapper">
+            <div v-show="isPlayingCountDown" class="animation-layer">
+              <p class="timer-label">
+                {{ countDownTimer }}
+              </p>
+            </div>
             <video id="recording-video"></video>
           </div>
           <div class="controller-wrapper">
@@ -123,26 +128,19 @@ export default {
   },
   data () {
     return {
+      questionTextFontSize: 50,
       recorder: null,
       mediaStream: null,
       videoElement: null,
       isStreamReady: false,
-      isRecording: false
+      isRecording: false,
+      isPlayingCountDown: false,
+      countDownTimer: 3
     }
   },
   mounted () {
-    this.videoElement = document.getElementById('recording-video')
-    const D = this
-    this.captureUserMedia((stream) => {
-      D.mediaStream = stream
-
-      D.videoElement.src = window.URL.createObjectURL(stream)
-      D.videoElement.play()
-      D.videoElement.muted = true
-      D.videoElement.controls = false
-
-      this.isStreamReady = true
-    })
+    this.initVideo()
+    this.adjustFontSize()
   },
   computed: {
     getRecordingMaxLength () {
@@ -153,74 +151,40 @@ export default {
     }
   },
   methods: {
-    /* submits recorded blob to nodejs server */
-    postFiles () {
-      let blob = this.recorder.getBlob()
+    initVideo () {
+      this.videoElement = document.getElementById('recording-video')
+      const D = this
+      this.captureUserMedia((stream) => {
+        D.mediaStream = stream
 
-      // getting unique identifier for the file name
-      let fileName = this.generateRandomString() + '.webm'
+        D.videoElement.src = window.URL.createObjectURL(stream)
+        D.videoElement.play()
+        D.videoElement.muted = true
+        D.videoElement.controls = false
 
-      let file = new File([blob], fileName, {
-        type: 'video/webm'
+        this.isStreamReady = true
       })
-
-      // this.videoElement.src = ''
-      // this.videoElement.poster = require('@/assets/images/ajax-loader.gif')
+    },
+    adjustFontSize () {
+      let containerWidth = this.$el.querySelector('.selected-topic-wrapper').clientWidth
+      let contentWidth = this.$el.querySelector('.question-text').clientWidth
+      // console.log('INITIAL content width', contentWidth)
 
       const D = this
-      this.xhr(CONSTANTS.VIDEO_SERVER_HOST + CONSTANTS.UPLOAD_API_PATH, file, (responseText) => {
-        let fileURL = JSON.parse(responseText).fileURL
-
-        console.info('fileURL', fileURL)
-        D.$store.commit('setFileURL', {fileURL: fileURL})
-        // D.videoElement.src = fileURL
-        // D.videoElement.play()
-        // D.videoElement.muted = false
-        // D.videoElement.controls = true // NEEDS TO BE FALSE
-
-        D.jumpTo('recording-finish', {dir: 'right'})
-      })
-
-      // if (this.mediaStream) this.mediaStream.stop()
-    },
-    /* XHR2/FormData */
-    xhr (url, data, callback) {
-      let request = new XMLHttpRequest()
-      request.onreadystatechange = function () {
-        if (request.readyState === 4 && request.status === 200) {
-          callback(request.responseText)
+      let reduceFontSize = function (containerWidth, contentWidth, callback) {
+        if (contentWidth > containerWidth) {
+          D.questionTextFontSize--
+          D.$nextTick().then(() => {
+            contentWidth = D.$el.querySelector('.question-text').clientWidth
+            // console.log('FIXED content width', contentWidth)
+            callback(containerWidth, contentWidth, callback)
+          })
+        } else {
+          // console.log('done')
         }
       }
 
-      // request.upload.onprogress = function (event) {
-      //     progressBar.max = event.total
-      //     progressBar.value = event.loaded
-      //     progressBar.innerHTML = 'Upload Progress ' + Math.round(event.loaded / event.total * 100) + "%";
-      // };
-      //
-      // request.upload.onload = function() {
-      //     percentage.style.display = 'none';
-      //     progressBar.style.display = 'none';
-      // };
-      request.open('POST', url)
-
-      let formData = new FormData()
-      formData.append('file', data)
-      formData.append('topic', this.$store.state.selectedTopic)
-      request.send(formData)
-    },
-    /* generating random string */
-    generateRandomString () {
-      if (window.crypto) {
-        let a = window.crypto.getRandomValues(new Uint32Array(3))
-        let token = ''
-        for (let i = 0; i < a.length; i++) {
-          token += a[i].toString(36)
-        }
-        return token
-      } else {
-        return (Math.random() * new Date().getTime()).toString(36).replace(/\./g, '')
-      }
+      reduceFontSize(containerWidth, contentWidth, reduceFontSize)
     },
     /* reusable getUserMedia */
     captureUserMedia (successCallback) {
@@ -237,19 +201,47 @@ export default {
     },
     /* start recording */
     startRecording () {
-      this.isRecording = true
-      this.recorder = RecordRTC(this.mediaStream, {
-        type: 'video'
+      this.startCountDown().then(() => {
+        this.isRecording = true
+        this.recorder = RecordRTC(this.mediaStream, {
+          type: 'video'
+        })
+        this.recorder.startRecording()
       })
-      this.recorder.startRecording()
+    },
+    startCountDown () {
+      this.isPlayingCountDown = true
+      this.countDownTimer = 3 // reset
+      const D = this
+      return new Promise((resolve, reject) => {
+        let timer = setInterval(() => {
+          D.countDownTimer--
+          if (D.countDownTimer <= 0) {
+            console.log('hey')
+            clearTimeout(timer)
+            D.isPlayingCountDown = false
+            resolve()
+          }
+        }, 1000)
+      })
     },
     /* stop recording */
     stopRecording () {
       this.isRecording = false
       if (this.$store.state.selectedTopic) {
-        this.recorder.stopRecording(this.postFiles)
+        const D = this
+        let callback = function () {
+          let blob = D.recorder.getBlob()
+          let fileName = Math.floor(Date.now() / 1000) + '.webm'
+          D.$store.dispatch('uploadVideo', {blob: blob, fileName: fileName})
+          .then(() => {
+            D.jumpTo('recording-finish', {dir: 'right'})
+          })
+        }
+        this.recorder.stopRecording(callback)
       } else {
         alert('Topic is not selected!')
+        this.reset()
       }
     },
     timeOver () {
@@ -307,19 +299,21 @@ main div.main-inner {
   padding: 50px;
 }
 
+main .selected-topic-wrapper {
+  text-align: center;
+}
+
 main h5.selected-topic {
   font-size: 40px;
   font-weight: bold;
   letter-spacing: 3px;
   line-height: 1.3em;
-  text-align: center;
   margin-bottom: 40px;
 }
 
 main p.question-text {
-  font-size: 50px;
+  display: inline-block;
   font-family: 'HoeflerText Regular';
-  text-align: center;
   margin-bottom: 50px;
   white-space: nowrap;
 }
@@ -333,12 +327,32 @@ main .recording-element-container {
 }
 
 main .video-wrapper {
+  position: relative;
   width: 912px;
   height: 513px;
   /* background-color: green; */
 }
 
+main .animation-layer {
+  z-index: 100;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.timer-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 300px;
+  color: white;
+}
+
 main video {
+  position: absolute;
   width: 100%;
   height: 100%;
   background-color: black;

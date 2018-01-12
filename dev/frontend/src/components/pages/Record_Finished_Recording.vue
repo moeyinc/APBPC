@@ -16,25 +16,39 @@
           <p class="thank-you">
             Thank you for telling us your story!
           </p>
-          <text-button
-            class="text-button"
-            :width="'350px'"
-            :height="'50px'"
-            :border-radius="'15px'"
-            :font="'bold 30px Arquitecta'"
-            :letter-spacing="'3px'"
-            :text-content="'BACK TO HOME'"
-            :regular-bg-color="'#47673b'"
-            :regular-text-color="'#efdfd4'"
-            :active-bg-color="'#efdfd4'"
-            :active-text-color="'#47673b'"
-            @clicked="jumpTo('home', {dir: 'home'})"
-           />
+          <div class="video-area">
+            <div class="video-wrapper">
+              <video
+                controls
+                autoplay
+                id="your-video"
+                :src="$store.state.uploadedFileURL"
+                @click="playStopVideo()"
+                />
+            </div>
+          </div>
+          <p class="note">
+            Your video will be published to other visitors after our staffs check the content.
+          </p>
         </div>
       </div>
     </main>
     <hr class="bottom-divider"/>
     <footer>
+      <text-button
+        class="text-button"
+        :width="'350px'"
+        :height="'50px'"
+        :border-radius="'15px'"
+        :font="'bold 30px Arquitecta'"
+        :letter-spacing="'3px'"
+        :text-content="'BACK TO HOME'"
+        :regular-bg-color="'#47673b'"
+        :regular-text-color="'#efdfd4'"
+        :active-bg-color="'#efdfd4'"
+        :active-text-color="'#47673b'"
+        @clicked="jumpTo('home', {dir: 'home'})"
+       />
     </footer>
   </div>
 </template>
@@ -50,6 +64,25 @@ export default {
   name: 'record-finished-recording',
   components: {
     PageAside, TextButton
+  },
+  data () {
+    return {
+      isPlaying: true,
+      videoElement: null
+    }
+  },
+  mounted () {
+    this.videoElement = this.$el.querySelector('#your-video')
+  },
+  methods: {
+    playStopVideo () {
+      this.isPlaying = !this.isPlaying
+      if (this.isPlaying) {
+        this.videoElement.play()
+      } else {
+        this.videoElement.pause()
+      }
+    }
   }
 }
 </script>
@@ -89,7 +122,7 @@ main {
   top: 135px;
   left: 200px;
   width: 1520px;
-  height: 745px;
+  height: 825px;
   /* background-color: brown; */
   text-align: center;
 }
@@ -104,14 +137,34 @@ main .thank-you-wrapper {
 main .thank-you {
   font-family: 'HoeflerText Regular';
   font-size: 50px;
-  margin-top: 100px;
   margin-bottom: 50px;
 }
 
-main .text-button {
-  display: inline-block;
+main .video-area {
+  width: 100%;
+  margin-bottom: 50px;
 }
 
+main .video-wrapper {
+  width: 912px;
+  height: 513px;
+  margin: 0 auto;
+  /* background-color: green; */
+}
+
+main video {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  /* box-sizing: content-box;
+  border-style: solid;
+  border-width: 6px;
+  border-color: #efdfd4; */
+}
+
+main p.note {
+  font-size: 30px;
+}
 
 hr.bottom-divider {
   background-color: #efdfd4;
@@ -123,13 +176,17 @@ hr.bottom-divider {
 
 footer {
   position: absolute;
-  top: 980px;
+  top: 960px;
   left: 200px;
-  height: 200px;
+  height: 120px;
   width: 1520px;
   text-align: center;
-  padding: 70px;
+  padding: 35px;
   /* background-color: purple; */
+}
+
+footer .text-button {
+  display: inline-block;
 }
 
 </style>

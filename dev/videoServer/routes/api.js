@@ -23,6 +23,7 @@ router.post('/upload-video', function(req, res, next) {
   form.parse(req, function(err, fields, files) {
     var file = util.inspect(files);
     var fileName = file.split('path:')[1].split('\',')[0].split(dir)[1].toString().replace(/\\/g, '').replace(/\//g, '');
+    var newFileName = fields.fileName
     var topic = fields.topic
     if (!topic) {
       console.error('topic was not specified')
@@ -40,7 +41,7 @@ router.post('/upload-video', function(req, res, next) {
 
     // rename the file
     var currentFilePath = './uploads/' + fileName
-    var newFilePath = './uploads/' + topic + '/' + fileName
+    var newFilePath = './uploads/' + topic + '/' + newFileName
     if (fs.existsSync(currentFilePath)) {
       fs.renameSync(currentFilePath, newFilePath)
     } else {
@@ -48,7 +49,8 @@ router.post('/upload-video', function(req, res, next) {
     }
 
     // respond to client
-    var fileURL = 'http://' + req.headers.host + '/uploads/' + topic + '/' + fileName;
+    // var fileURL = 'http://' + req.headers.host + '/uploads/' + topic + '/' + newFileName;
+    var fileURL = 'http://' + req.headers.host + '/' + topic + '/' + newFileName;
     console.log('fileURL: ', fileURL);
     res.json({fileURL: fileURL})
   });
@@ -80,9 +82,13 @@ router.post('/download-videos', function(req, res, next) {
   // get all files under the folder
   fs.readdir(folderPath, (err, files) => {
     files.forEach(file => {
-      // var fileURL = 'http://' + req.headers.host + '/uploads/' + topic + '/' + file;
-      var fileURL = 'http://' + req.headers.host + '/' + topic + '/' + file;
-      fileURLs.push(fileURL)
+      console.log('file', file)
+      let ext = file.substr(-5)
+      if (ext === '.webm') {
+        // var fileURL = 'http://' + req.headers.host + '/uploads/' + topic + '/' + file;
+        var fileURL = 'http://' + req.headers.host + '/' + topic + '/' + file;
+        fileURLs.push(fileURL)
+      }
     })
     // respond to client
     console.log('fileURLs: ', fileURLs);

@@ -15,13 +15,14 @@
       <div class="main-inner">
         <div class="selected-topic-wrapper">
           <h5 class="selected-topic">- SELECTED TOPIC -</h5>
-          <p class="question-text">
+          <p class="question-text" :style="{fontSize: questionTextFontSize + 'px'}">
             {{ $store.state.selectedTopic }}
           </p>
         </div>
         <div class="video-area">
           <div class="video-wrapper">
             <video
+              autoplay
               controls
               id="watching-video"
               :src="selectedVideoURL"
@@ -32,13 +33,14 @@
         </div>
       </div>
     </main>
-    <footer>
+    <footer :style="getVideoRollLeft">
       <video
         v-for="(item, index) in videoURLs"
         :key="index"
+        preload="metadata"
         :src="item"
         :class="{selected: (item === selectedVideoURL) ? true : false}"
-        @click="switchVideo(item)"
+        @click="switchVideo(item, index)"
         />
     </footer>
   </div>
@@ -56,26 +58,57 @@ export default {
   },
   data () {
     return {
+      questionTextFontSize: 50,
       videoElement: null,
       videoURLs: [],
       selectedVideoURL: null,
+      selectedVideoIndex: 0,
       isPlaying: false
     }
   },
   created () {
     this.$store.dispatch('getVideos')
-    .then((data) => {
-      console.log('I got res!!', data)
-      this.videoURLs = data.fileURLs
+    .then((fileURLs) => {
+      this.videoURLs = fileURLs
       this.selectedVideoURL = this.videoURLs[0]
     })
   },
   mounted () {
     this.videoElement = document.getElementById('watching-video')
+    this.adjustFontSize()
+  },
+  computed: {
+    getVideoRollLeft () {
+      let left = 864 - this.selectedVideoIndex * (192 + 20)
+      return {left: left + 'px'}
+    }
   },
   methods: {
-    switchVideo (item) {
+    adjustFontSize () {
+      let containerWidth = this.$el.querySelector('.selected-topic-wrapper').clientWidth
+      let contentWidth = this.$el.querySelector('.question-text').clientWidth
+      // console.log('container width', containerWidth)
+      // console.log('INITIAL content width', contentWidth)
+
+      const D = this
+      let reduceFontSize = function (containerWidth, contentWidth, callback) {
+        if (contentWidth > containerWidth) {
+          D.questionTextFontSize--
+          D.$nextTick().then(() => {
+            contentWidth = D.$el.querySelector('.question-text').clientWidth
+            // console.log('FIXED content width', contentWidth)
+            callback(containerWidth, contentWidth, callback)
+          })
+        } else {
+          // console.log('done')
+        }
+      }
+
+      reduceFontSize(containerWidth, contentWidth, reduceFontSize)
+    },
+    switchVideo (item, index) {
       this.selectedVideoURL = item
+      this.selectedVideoIndex = index
     },
     playStopVideo () {
       this.isPlaying = !this.isPlaying
@@ -128,12 +161,12 @@ main {
   /* background-color: brown; */
 }
 
-/* main div.main-inner {
+main div.main-inner {
   padding: 50px;
-} */
+}
 
 main .selected-topic-wrapper {
-  padding: 50px;
+  text-align: center;
 }
 
 main h5.selected-topic {
@@ -141,14 +174,12 @@ main h5.selected-topic {
   font-weight: bold;
   letter-spacing: 3px;
   line-height: 1.3em;
-  text-align: center;
   margin-bottom: 40px;
 }
 
 main p.question-text {
-  font-size: 50px;
+  display: inline-block;
   font-family: 'HoeflerText Regular';
-  text-align: center;
   margin-bottom: 50px;
   white-space: nowrap;
 }
@@ -156,8 +187,10 @@ main p.question-text {
 main .video-area {
   position: absolute;
   top: 250px;
+  left: 0px;
   width: 100%;
   height: 513px;
+  text-align: center;
 }
 
 main .video-wrapper {
@@ -180,10 +213,10 @@ main video {
 footer {
   position: absolute;
   top: 898px;
-  left: 0px;
+  /* left: 864px; */
   height: 182px;
   width: 1920px;
-  text-align: center;
+  /* text-align: center; */
   padding: 37px 0px;
   /* background-color: purple; */
 }
@@ -193,9 +226,10 @@ footer video {
   height: 108px;
   width: 192px;
   margin: 0 10px;
+  background-color: black;
 }
 
 footer video.selected {
-  filter: brightness(40%);
+  filter: brightness(50%);
 }
 </style>

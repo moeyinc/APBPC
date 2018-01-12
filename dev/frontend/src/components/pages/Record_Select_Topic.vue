@@ -23,11 +23,11 @@
             v-for="(topic, index) in getTopics"
             :key="index"
             class="text-button"
-            :width="'680px'"
-            :height="'170px'"
+            :width="getButtonWidth"
+            :height="getButtonHeight"
             :border-radius="'40px'"
             :padding="'0 50px'"
-            :font="'40px Arquitecta'"
+            :font="getButtonFont"
             :letter-spacing="'1px'"
             :text-align="'left'"
             :text-content="topic"
@@ -63,6 +63,29 @@ export default {
   computed: {
     getTopics () {
       return topics
+    },
+    getButtonWidth () {
+      if (this.getTopics.length >= 4) {
+        return '680px'
+      } else if (this.getTopics.length <= 3) {
+        return '1460px'
+      }
+    },
+    getButtonHeight () {
+      if (this.getTopics.length >= 5 || this.getTopics.length === 3) {
+        return '170px'
+      } else if (this.getTopics.length === 4 || this.getTopics.length <= 2) {
+        return '280px'
+      }
+    },
+    getButtonFont () {
+      if (this.getTopics.length >= 5) {
+        return '40px Arquitecta'
+      } else if (this.getTopics.length >= 3) {
+        return '45px Arquitecta'
+      } else if (this.getTopics.length <= 2) {
+        return '70px Arquitecta'
+      }
     }
   },
   methods: {
