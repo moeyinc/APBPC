@@ -28,20 +28,22 @@
               :src="selectedVideoURL"
               @click="playStopVideo()"
             />
-            <!-- :poster="require('@/assets/images/poster.png')" -->
           </div>
         </div>
       </div>
     </main>
-    <footer :style="getVideoRollLeft">
-      <video
-        v-for="(item, index) in videoURLs"
-        :key="index"
-        preload="metadata"
-        :src="item"
-        :class="{selected: (item === selectedVideoURL) ? true : false}"
-        @click="switchVideo(item, index)"
-        />
+    <footer>
+      <horizontal-scroll-video-gallery
+        :videoURLs="videoURLs"
+        :selectedVideoURL="selectedVideoURL"
+        :video-width="192"
+        :video-height="108"
+        :video-margin="10"
+        :initial-video-container-left="120"
+        :video-container-padding="'37px 0px'"
+        :selected-style="{filter: 'brightness(50%)'}"
+        @clicked="switchVideo"
+      />
     </footer>
   </div>
 </template>
@@ -51,10 +53,11 @@
 ================================================== -->
 <script>
 import PageAside from '@/components/page-components/PageAside'
+import HorizontalScrollVideoGallery from '@/components/reusables/HorizontalScrollVideoGallery'
 export default {
   name: 'listen-other-stories',
   components: {
-    PageAside
+    PageAside, HorizontalScrollVideoGallery
   },
   data () {
     return {
@@ -62,7 +65,7 @@ export default {
       videoElement: null,
       videoURLs: [],
       selectedVideoURL: null,
-      selectedVideoIndex: 0,
+      videoContainerWidth: 0,
       isPlaying: false
     }
   },
@@ -76,12 +79,6 @@ export default {
   mounted () {
     this.videoElement = document.getElementById('watching-video')
     this.adjustFontSize()
-  },
-  computed: {
-    getVideoRollLeft () {
-      let left = 864 - this.selectedVideoIndex * (192 + 20)
-      return {left: left + 'px'}
-    }
   },
   methods: {
     adjustFontSize () {
@@ -103,12 +100,7 @@ export default {
           // console.log('done')
         }
       }
-
       reduceFontSize(containerWidth, contentWidth, reduceFontSize)
-    },
-    switchVideo (item, index) {
-      this.selectedVideoURL = item
-      this.selectedVideoIndex = index
     },
     playStopVideo () {
       this.isPlaying = !this.isPlaying
@@ -117,6 +109,9 @@ export default {
       } else {
         this.videoElement.pause()
       }
+    },
+    switchVideo (item) {
+      this.selectedVideoURL = item
     }
   }
 }
@@ -210,26 +205,20 @@ main video {
   border-color: #efdfd4; */
 }
 
+video::-webkit-media-controls-fullscreen-button {
+  display: none;
+}
+
+video::-internal-media-controls-download-button, audio::-internal-media-controls-download-button {
+  display: none;
+}
+
 footer {
   position: absolute;
   top: 898px;
-  /* left: 864px; */
+  left: 0px;
   height: 182px;
   width: 1920px;
-  /* text-align: center; */
-  padding: 37px 0px;
   /* background-color: purple; */
-}
-
-footer video {
-  display: inline-block;
-  height: 108px;
-  width: 192px;
-  margin: 0 10px;
-  background-color: black;
-}
-
-footer video.selected {
-  filter: brightness(50%);
 }
 </style>

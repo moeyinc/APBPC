@@ -38,7 +38,6 @@
             @clicked="setTopic(topic)"
            />
         </div>
-
       </div>
     </main>
     <hr class="bottom-divider"/>

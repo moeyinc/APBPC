@@ -26,6 +26,9 @@
                 {{ countDownTimer }}
               </p>
             </div>
+            <div v-show="isRecording" class="recording-indicator">
+              RECORDING
+            </div>
             <video id="recording-video"></video>
           </div>
           <div class="controller-wrapper">
@@ -349,6 +352,16 @@ main .animation-layer {
   font-weight: bold;
   font-size: 300px;
   color: white;
+}
+
+.recording-indicator {
+  z-index: 100;
+  position: absolute;
+  color: red;
+  font-size: 30px;
+  font-weight: bold;
+  top: 20px;
+  left: 20px;
 }
 
 main video {
