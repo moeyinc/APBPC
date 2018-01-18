@@ -2,7 +2,12 @@
  Vue Template
 ================================================== -->
 <template>
-  <div id="app" :style="{width: monitorWidth + 'px', height: monitorHeight + 'px'}">
+  <div
+    id="app"
+    :style="{width: monitorWidth + 'px', height: monitorHeight + 'px'}"
+    @click="[displayRipple($event), resetAppTimer()]"
+    @mousemove="resetAppTimer()"
+    >
     <router-view />
   </div>
 </template>
@@ -18,8 +23,13 @@ export default {
     return {
       monitorWidth: 1920,
       monitorHeight: 1080,
-      showNextView: false
+      showNextView: false,
+      appTimer: null
     }
+  },
+  created () {
+    // reset the app timer
+    this.resetAppTimer()
   },
   mounted () {
     this.resize()
@@ -43,6 +53,40 @@ export default {
       // zoom it
       const el = document.getElementById('app')
       el.style.zoom = zoom
+    },
+    // display ripple effect at mouse-clicked position
+    displayRipple (event) {
+      // remove old repple element
+      const oldRippleElement = document.getElementById('ripple')
+      if (oldRippleElement) {
+        oldRippleElement.parentNode.removeChild(oldRippleElement)
+      }
+      console.log('displaying ripple')
+
+      // calc ripple position
+      const rippleRadius = 15
+      let posX = event.clientX - rippleRadius
+      let posY = event.clientY - rippleRadius
+
+      // create new ripple element
+      const newRippleElement = document.createElement('span')
+      newRippleElement.id           = 'ripple'
+      newRippleElement.style.width  = (rippleRadius * 2) + 'px'
+      newRippleElement.style.height = (rippleRadius * 2) + 'px'
+      newRippleElement.style.left   = posX + 'px'
+      newRippleElement.style.top    = posY + 'px'
+
+      const appElement = document.getElementById('app')
+      appElement.appendChild(newRippleElement)
+
+      newRippleElement.classList.add('rippleEffect')
+    },
+    resetAppTimer () {
+      clearTimeout(this.appTimer)
+      this.appTimer = setTimeout(() => {
+        console.log('Timeout: 10 mins passed. Returning to Home screen.')
+        this.jumpTo('home', {dir: 'home'})
+      }, 1000 * 60 * 10) // 10 mins
     }
   }
 }
@@ -146,5 +190,26 @@ hr {
   height: 100%;
   position: absolute;
   overflow: hidden;
+}
+
+#ripple {
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(0);
+  position: absolute;
+  opacity: 1;
+  z-index: 2000;
+}
+.rippleEffect {
+    animation: rippleDrop .3s linear;
+}
+
+@keyframes rippleDrop {
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 </style>
