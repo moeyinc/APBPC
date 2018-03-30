@@ -99,4 +99,9 @@ router.post('/download-videos', function(req, res, next) {
   })
 });
 
+router.get('/get-topics', function(req, res, next) {
+  var topic_array = fs.readFileSync(path.join(process.env.DIR_TOPICS, 'topics.txt')).toString().split("\n").filter(String);
+  res.json({topics: topic_array});
+});
+
 module.exports = router;
