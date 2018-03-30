@@ -1,5 +1,6 @@
 "use strict";
 
+const dotenv = require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
@@ -9,10 +10,11 @@ var formidable = require('formidable');
 var util = require('util');
 var path = require('path');
 
+
 /* POST a video file */
 router.post('/upload-video', function(req, res, next) {
   var form = new formidable.IncomingForm();
-  var dir = '/uploads/';
+  var dir = process.env.DIR_UPLOADS_SPLIT;
   form.uploadDir = path.join(__dirname, '..', dir);
   form.keepExtensions = true;
   form.maxFieldsSize = 10 * 1024 * 1024;
@@ -22,6 +24,7 @@ router.post('/upload-video', function(req, res, next) {
   // parsing the formData to store the file
   form.parse(req, function(err, fields, files) {
     var file = util.inspect(files);
+    console.log(file);
     var fileName = file.split('path:')[1].split('\',')[0].split(dir)[1].toString().replace(/\\/g, '').replace(/\//g, '');
     var newFileName = fields.fileName
     var topic = fields.topic
@@ -33,15 +36,15 @@ router.post('/upload-video', function(req, res, next) {
 
     // make a dir for the topic if there is no folders with the name
     topic = sanitize(topic).replace(/\ /g, '_')
-    var folderPath = './uploads/' + topic
+    var folderPath = process.env.DIR_UPLOADS + topic;
     if (!fs.existsSync(folderPath)) {
       console.log('creating dir')
       fs.mkdirSync(folderPath)
     }
 
     // rename the file
-    var currentFilePath = './uploads/' + fileName
-    var newFilePath = './uploads/' + topic + '/' + newFileName
+    var currentFilePath = process.env.DIR_UPLOADS + fileName
+    var newFilePath = process.env.DIR_UPLOADS + topic + '/' + newFileName
     if (fs.existsSync(currentFilePath)) {
       fs.renameSync(currentFilePath, newFilePath)
     } else {
@@ -70,7 +73,7 @@ router.post('/download-videos', function(req, res, next) {
 
   // check if there is a folder with the specific name of the topic
   topic = sanitize(topic).replace(/\ /g, '_')
-  var folderPath = './uploads/' + topic
+  var folderPath = process.env.DIR_APPROVED + topic
   if (!fs.existsSync(folderPath)) {
     console.error('no folder found with the given topic name')
     res.status(400)
@@ -94,6 +97,11 @@ router.post('/download-videos', function(req, res, next) {
     console.log('fileURLs: ', fileURLs);
     res.json({fileURLs: fileURLs});
   })
+});
+
+router.get('/get-topics', function(req, res, next) {
+  var topic_array = fs.readFileSync(path.join(process.env.DIR_TOPICS, 'topics.txt')).toString().split("\n").filter(String);
+  res.json({topics: topic_array});
 });
 
 module.exports = router;

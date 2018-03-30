@@ -1,0 +1,5 @@
+*.webm
+*.env
+/dev/backend/node_modules
+/dev/frontend/node_modules
+/dev/videoServer/node_modules
