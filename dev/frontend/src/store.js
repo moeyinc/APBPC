@@ -82,6 +82,20 @@ const actions = {
         reject(err)
       })
     })
+  },
+  getTopics () {
+    return new Promise((resolve, reject) => {
+      axios.get(CONSTANTS.VIDEO_SERVER_HOST + CONSTANTS.TOPC_API_PATH)
+      .then((res) => {
+        let topics = res.data.topics
+        console.log('topics fetched', topics)
+        resolve(topics)
+      })
+      .catch((err) => {
+        console.error(err)
+        reject(err)
+      })
+    })
   }
 }
 

@@ -61,7 +61,7 @@ export default {
       if (oldRippleElement) {
         oldRippleElement.parentNode.removeChild(oldRippleElement)
       }
-      console.log('displaying ripple')
+      // console.log('displaying ripple')
 
       // calc ripple position
       const rippleRadius = 15

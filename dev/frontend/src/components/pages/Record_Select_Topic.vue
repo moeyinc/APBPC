@@ -20,7 +20,7 @@
         </div>
         <div class="text-button-container">
           <text-button
-            v-for="(topic, index) in getTopics"
+            v-for="(topic, index) in topics"
             :key="index"
             class="text-button"
             :width="getButtonWidth"
@@ -54,36 +54,44 @@
 <script>
 import PageAside from '@/components/page-components/PageAside'
 import TextButton from '@/components/reusables/TextButton'
-import topics from '../../../static/topics.js'
+// import topics from '../../../static/topics.js'
 export default {
   name: 'record-select-topics',
+  data () {
+    return {
+      topics: []
+    }
+  },
   components: {
     PageAside, TextButton
   },
+  created () {
+    this.$store.dispatch('getTopics')
+    .then((newTopics) => {
+      this.topics = newTopics
+    })
+  },
   computed: {
-    getTopics () {
-      return topics
-    },
     getButtonWidth () {
-      if (this.getTopics.length >= 4) {
+      if (this.topics.length >= 4) {
         return '680px'
-      } else if (this.getTopics.length <= 3) {
+      } else if (this.topics.length <= 3) {
         return '1460px'
       }
     },
     getButtonHeight () {
-      if (this.getTopics.length >= 5 || this.getTopics.length === 3) {
+      if (this.topics.length >= 5 || this.topics.length === 3) {
         return '170px'
-      } else if (this.getTopics.length === 4 || this.getTopics.length <= 2) {
+      } else if (this.topics.length === 4 || this.topics.length <= 2) {
         return '280px'
       }
     },
     getButtonFont () {
-      if (this.getTopics.length >= 5) {
+      if (this.topics.length >= 5) {
         return '40px Arquitecta'
-      } else if (this.getTopics.length >= 3) {
+      } else if (this.topics.length >= 3) {
         return '45px Arquitecta'
-      } else if (this.getTopics.length <= 2) {
+      } else if (this.topics.length <= 2) {
         return '70px Arquitecta'
       }
     }
