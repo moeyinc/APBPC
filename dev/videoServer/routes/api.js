@@ -1,6 +1,7 @@
 "use strict";
 
 const dotenv = require('dotenv').config();
+var csv = require("csvtojson");
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
@@ -100,8 +101,14 @@ router.post('/download-videos', function(req, res, next) {
 });
 
 router.get('/get-topics', function(req, res, next) {
-  var topic_array = fs.readFileSync(path.join(process.env.DIR_TOPICS, 'topics.txt')).toString().split("\n").filter(String);
-  res.json({topics: topic_array});
+//  var topic_array = fs.readFileSync(path.join(process.env.DIR_TOPICS, 'topics.txt')).toString().split("\n").filter(String);
+  csv()
+    .fromFile(path.join(process.env.DIR_TOPICS, 'topics.txt'))
+    .on("end_parsed",function(jsonArrayObj){ //when parse finished, result will be emitted here.
+      res.json({topics: jsonArrayObj});
+      console.log(jsonArrayObj); 
+   })
+
 });
 
 module.exports = router;
