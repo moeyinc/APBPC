@@ -103,7 +103,7 @@ router.post('/download-videos', function(req, res, next) {
 router.get('/get-topics', function(req, res, next) {
 //  var topic_array = fs.readFileSync(path.join(process.env.DIR_TOPICS, 'topics.txt')).toString().split("\n").filter(String);
   csv()
-    .fromFile(path.join(process.env.DIR_TOPICS, 'topics.txt'))
+    .fromFile(path.join(process.env.FILE_TOPICS))
     .on("end_parsed",function(jsonArrayObj){ //when parse finished, result will be emitted here.
       res.json({topics: jsonArrayObj});
       console.log(jsonArrayObj); 
