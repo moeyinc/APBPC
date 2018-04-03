@@ -106,6 +106,7 @@ electronApp.on('window-all-closed', function() {
 
 electronApp.on('ready', function() {
   mainWindow = new BrowserWindow({width: 1920, height: 1080});
+  mainWindow.setFullScreen(true);
   mainWindow.loadURL('http://localhost:' + port);
 
   mainWindow.on('closed', function() {
