@@ -14,7 +14,7 @@
     <main>
       <div class="main-inner">
         <div>
-          <p class="lead-text">
+          <p class="lead-text" :style="{marginBottom: getMarginBottom}">
             Select from the topics below to hear other people's thoughts and opinions on the Pine Bush.
           </p>
         </div>
@@ -22,19 +22,28 @@
           <text-button
             v-for="(topic, index) in topics"
             :key="index"
-            class="text-button"
+            v-if="parseInt(topic.active)"
+            :style="{marginBottom: getMarginBottom}"
             :width="getButtonWidth"
             :height="getButtonHeight"
             :border-radius="'40px'"
-            :padding="'0 50px'"
+            :padding="getPadding"
             :font="getButtonFont"
             :letter-spacing="'1px'"
             :text-align="'left'"
-            :text-content="topic"
+            :text-title="topic.topic"
+            :text-content="topic.question"
             :regular-bg-color="'#47673b'"
             :regular-text-color="'#efdfd4'"
             :active-bg-color="'#efdfd4'"
             :active-text-color="'#47673b'"
+            :title-letter-spacing="'1px'"
+            :title-font="getButtonTitleFont"
+            :title-text-align="'left'"
+            :title-font-weight="'bold'"
+            :title-height="'10%'"
+            :title-margin-bottom="'10px'"
+            :body-height="'80%'"
             @clicked="setTopic(topic)"
            />
         </div>
@@ -69,35 +78,74 @@ export default {
     .then((newTopics) => {
       this.topics = newTopics
     })
+    // this.topics = topics
   },
   computed: {
+    getActiveTopicCount () {
+      let count = 0
+      for (let i = 0; i < this.topics.length; i++) {
+        if (parseInt(this.topics[i].active)) {
+          count++
+        }
+      }
+      return count
+    },
     getButtonWidth () {
-      if (this.topics.length >= 4) {
+      if (this.getActiveTopicCount >= 4) {
         return '680px'
-      } else if (this.topics.length <= 3) {
+      } else if (this.getActiveTopicCount <= 3) {
         return '1460px'
       }
     },
     getButtonHeight () {
-      if (this.topics.length >= 5 || this.topics.length === 3) {
+      if (this.getActiveTopicCount >= 7) {
+        return '140px'
+      } else if (this.getActiveTopicCount >= 5 || this.getActiveTopicCount === 3) {
         return '170px'
-      } else if (this.topics.length === 4 || this.topics.length <= 2) {
+      } else if (this.getActiveTopicCount === 4 || this.getActiveTopicCount <= 2) {
         return '280px'
       }
     },
+    getMarginBottom () {
+      if (this.getActiveTopicCount >= 7) {
+        return '30px'
+      } else if (this.getActiveTopicCount <= 6) {
+        return '50px'
+      }
+    },
     getButtonFont () {
-      if (this.topics.length >= 5) {
-        return '40px Arquitecta'
-      } else if (this.topics.length >= 3) {
+      if (this.getActiveTopicCount >= 7) {
+        return '28px Arquitecta'
+      } else if (this.getActiveTopicCount >= 5) {
+        return '36px Arquitecta'
+      } else if (this.getActiveTopicCount >= 3) {
         return '45px Arquitecta'
-      } else if (this.topics.length <= 2) {
+      } else if (this.getActiveTopicCount <= 2) {
         return '70px Arquitecta'
+      }
+    },
+    getButtonTitleFont () {
+      if (this.getActiveTopicCount >= 5) {
+        return '20px Arquitecta'
+      } else if (this.getActiveTopicCount >= 3) {
+        return '26px Arquitecta'
+      } else if (this.getActiveTopicCount <= 2) {
+        return '26px Arquitecta'
+      }
+    },
+    getPadding () {
+      if (this.getActiveTopicCount >= 5) {
+        return '15px 50px'
+      } else if (this.getActiveTopicCount >= 3) {
+        return '30px 50px'
+      } else if (this.getActiveTopicCount <= 2) {
+        return '30px 50px'
       }
     }
   },
   methods: {
     setTopic (topic) {
-      this.$store.commit('setTopic', {topic: topic})
+      this.$store.commit('setTopic', {topic: topic.question})
       this.jumpTo('listening-watch', {dir: 'right'})
     }
   }
@@ -115,7 +163,6 @@ header {
   left: 200px;
   width: 1520px;
   height: 230px;
-  /* background-color: darkgreen; */
 }
 
 header h2 {
@@ -151,17 +198,13 @@ main p.lead-text {
   font-size: 40px;
   line-height: 1.3em;
   text-align: center;
-  margin-bottom: 50px;
+  /* margin-bottom: 50px; */
 }
 
 main .text-button-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-}
-
-main .text-button {
-  margin-bottom: 50px;
 }
 
 hr.bottom-divider {

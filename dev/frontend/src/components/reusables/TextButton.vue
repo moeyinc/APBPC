@@ -11,11 +11,26 @@
     @click="clicked()">
 
     <div class="inner">
-      <p
-        class="button-label"
-        :style="getLabelStyle"
-        v-html="textContent">
-      </p>
+      <div
+        v-if="textTitle"
+        class="title-wrapper"
+        :style="{height: titleHeight, marginBottom: titleMarginBottom}">
+        <h2
+          class="button-title"
+          :style="getTitleStyle">
+          {{ textTitle.toUpperCase() }}
+        </h2>
+      </div>
+
+      <div
+        class="body-wrapper"
+        :style="{height: bodyHeight}">
+        <p
+          class="button-label"
+          :style="getLabelStyle"
+          v-html="textContent">
+        </p>
+      </div>
     </div>
 
   </div>
@@ -39,11 +54,23 @@ export default {
     lineHeight: String,
     letterSpacing: String,
     textAlign: String,
+    textTitle: String,
     textContent: String,
     regularBgColor: String,
     regularTextColor: String,
     activeBgColor: String,
-    activeTextColor: String
+    activeTextColor: String,
+    titleLineHeight: String,
+    titleLetterSpacing: String,
+    titleFont: String,
+    titleTextAlign: String,
+    titleFontWeight: String,
+    titleHeight: String,
+    bodyHeight: {
+      type: String,
+      default: '100%'
+    },
+    titleMarginBottom: String
   },
   data () {
     return {
@@ -70,6 +97,16 @@ export default {
         font: this.font,
         color: this.getTextColor,
         textAlign: this.textAlign
+      }
+    },
+    getTitleStyle () {
+      return {
+        lineHeight: this.titleLineHeight,
+        letterSpacing: this.titleLetterSpacing,
+        font: this.titleFont,
+        color: this.getTextColor,
+        textAlign: this.titleTextAlign,
+        fontWeight: this.titleFontWeight
       }
     },
     getBgColor () {
@@ -101,9 +138,23 @@ export default {
 ================================================== -->
 <style scoped>
 .inner {
+  height: 100%;
+  position: relative;
+}
+
+.title-wrapper {
   display: table;
   width: 100%;
-  height: 100%;
+}
+
+.button-title {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.body-wrapper {
+  display: table;
+  width: 100%;
 }
 
 .button-label {

@@ -89,6 +89,7 @@ const actions = {
       .then((res) => {
         let topics = res.data.topics
         console.log('topics fetched', topics)
+        // console.log(JSON.stringify(topics))
         resolve(topics)
       })
       .catch((err) => {
