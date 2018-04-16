@@ -15,31 +15,6 @@
           </p>
         </div>
         <div class="svg-button-container">
-          <svg-button
-            class="svg-button"
-            :has-label="true"
-            :width="'520px'"
-            :height="'370px'"
-            :padding-top="'40px'"
-            :svg-wrapper-height="'180px'"
-            :svg-label-gap="'10px'"
-            :label-wrapper-height="'100px'"
-            :padding-bottom="'40px'"
-            :svg-width="'auto'"
-            :svg-height="'140px'"
-            :svg-src="require('@/assets/images/recording.svg')"
-            :label-height="'100px'"
-            :font="'bold 36px Arquitecta'"
-            :line-height="'150px'"
-            :letter-spacing="'3px'"
-            :text-content="'RECORD YOUR<br />OWN STORY'"
-            :regular-bg-color="'#47673b'"
-            :regular-text-color="'#efdfd4'"
-            :active-bg-color="'#efdfd4'"
-            :active-text-color="'#47673b'"
-            :border-radius="'50px'"
-            @clicked="jumpTo('recording-topics', {dir: 'right'})"
-           />
            <svg-button
              class="svg-button"
              :has-label="true"
