@@ -106,6 +106,12 @@ electronApp.on('window-all-closed', function() {
 
 electronApp.on('ready', function() {
   mainWindow = new BrowserWindow({width: 1920, height: 1080});
+  let webContents = mainWindow.webContents;
+  webContents.on('did-finish-load', () => {
+    webContents.setZoomFactor(1);
+    webContents.setVisualZoomLevelLimits(1, 1);
+    webContents.setLayoutZoomLevelLimits(0, 0);
+  });
   mainWindow.setFullScreen(true);
   mainWindow.loadURL('http://localhost:' + port);
 
