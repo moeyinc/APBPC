@@ -197,13 +197,23 @@ export default {
       }
       console.log('caotyring user media')
 
-      navigator.getUserMedia(session, successCallback, (error) => {
-        alert('Unable to capture your camera. Please check console logs.')
+      // navigator.getUserMedia(session, successCallback, (error) => {
+      //   alert('Unable to capture the camera. Please make sure the camera is connected and reboot the computer.')
+      //   console.error(error)
+      //   this.jumpTo('home', {dir: 'home'})
+      // })
+      navigator.mediaDevices.getUserMedia(session)
+      .then(successCallback)
+      .catch((error) => {
+        alert('Unable to capture the camera. Please make sure the camera is connected and reboot the computer.')
         console.error(error)
+        this.jumpTo('home', {dir: 'home'})
       })
     },
     /* start recording */
     startRecording () {
+      if (this.isPlayingCountDown) return
+
       this.startCountDown().then(() => {
         this.isRecording = true
         this.recorder = RecordRTC(this.mediaStream, {
