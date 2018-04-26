@@ -7,6 +7,10 @@
       :has-back-button="true"
       :back-to="'recording-topics'"
     />
+    <div id="audio-level-meter">
+      <!-- <div v-for="n in getInputBlockNum" class="indicator-block"></div> -->
+      <div class="indicator-bar" :style="getIndicatorBarWidth"></div>
+    </div>
     <header>
       <h2>RECORD YOUR OWN STORY</h2>
     </header>
@@ -141,7 +145,8 @@ export default {
       isRecording: false,
       isPlayingCountDown: false,
       countDownTimer: 3,
-      dialog: true
+      dialog: true,
+      inputLevel: 0
     }
   },
   mounted () {
@@ -154,22 +159,65 @@ export default {
     },
     getTextButtonStyle () {
       return this.isStreamReady ? '' : {filter: 'opacity(30%)'}
+    },
+    getInputBlockNum () {
+      let num = Math.floor(this.inputLevel % 10)
+      return num
+    },
+    getIndicatorBarWidth () {
+      let maxWidth = 500
+      let width = maxWidth * (this.inputLevel / 100)
+
+      return {
+        width: width + 'px'
+      }
     }
   },
   methods: {
     initVideo () {
       this.videoElement = document.getElementById('recording-video')
-      const D = this
       this.captureUserMedia((stream) => {
-        D.mediaStream = stream
+        this.mediaStream = stream
 
-        D.videoElement.src = window.URL.createObjectURL(stream)
-        D.videoElement.play()
-        D.videoElement.muted = true
-        D.videoElement.controls = false
+        this.videoElement.src = window.URL.createObjectURL(stream)
+        this.videoElement.play()
+        this.videoElement.muted = true
+        this.videoElement.controls = false
+
+        this.initAudioLevelMeter(stream)
 
         this.isStreamReady = true
       })
+    },
+    initAudioLevelMeter (stream) {
+      let audioContext = new AudioContext()
+      let analyser = audioContext.createAnalyser()
+      let microphone = audioContext.createMediaStreamSource(stream)
+      let javascriptNode = audioContext.createScriptProcessor(2048, 1, 1)
+
+      analyser.smoothingTimeConstant = 0.8
+      analyser.fftSize = 1024
+
+      microphone.connect(analyser)
+      analyser.connect(javascriptNode)
+      javascriptNode.connect(audioContext.destination)
+
+      // let canvasContext = document.getElementById('audio-level-meter').getContext("2d")
+
+      const D = this
+      javascriptNode.onaudioprocess = function () {
+        let array = new Uint8Array(analyser.frequencyBinCount)
+        analyser.getByteFrequencyData(array)
+        let values = 0
+
+        let length = array.length
+        for (let i = 0; i < length; i++) {
+          values += (array[i])
+        }
+
+        let average = values / length
+        D.inputLevel = average // / 100
+      }
     },
     adjustFontSize () {
       let containerWidth = this.$el.querySelector('.selected-topic-wrapper').clientWidth
@@ -200,11 +248,6 @@ export default {
       }
       console.log('caotyring user media')
 
-      // navigator.getUserMedia(session, successCallback, (error) => {
-      //   alert('Unable to capture the camera. Please make sure the camera is connected and reboot the computer.')
-      //   console.error(error)
-      //   this.jumpTo('home', {dir: 'home'})
-      // })
       navigator.mediaDevices.getUserMedia(session)
       .then(successCallback)
       .catch((error) => {
@@ -348,6 +391,29 @@ main .video-wrapper {
   width: 912px;
   height: 513px;
   /* background-color: green; */
+}
+
+#audio-level-meter {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+#audio-level-meter .indicator-block {
+  width: 20px;
+  height: 30px;
+  background-color: grey;
+  margin-right: 10px;
+  display: inline-block;
+  border-radius: 3px;
+}
+
+#audio-level-meter .indicator-bar {
+  background-color: rgba(255, 255, 255, 0.4);
+  display: inline-block;
+  height: 10px;
 }
 
 main .animation-layer {
