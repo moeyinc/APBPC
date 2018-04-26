@@ -110,6 +110,7 @@
     <hr class="bottom-divider"/>
     <footer>
     </footer>
+    <record-instruction-dialog v-if="dialog" @clicked="dialog = false"/>
   </div>
 </template>
 
@@ -121,13 +122,14 @@
 import PageAside from '@/components/page-components/PageAside'
 import CircularVisualRecordingTimer from '@/components/reusables/CircularVisualRecordingTimer'
 import TextButton from '@/components/reusables/TextButton'
+import RecordInstructionDialog from '@/components/reusables/RecordInstructionDialog'
 import RecordRTC from 'recordrtc'
 import CONSTANTS from '@/../static/constants'
 
 export default {
   name: 'record-record-story',
   components: {
-    PageAside, CircularVisualRecordingTimer, TextButton
+    PageAside, CircularVisualRecordingTimer, TextButton, RecordInstructionDialog
   },
   data () {
     return {
@@ -138,7 +140,8 @@ export default {
       isStreamReady: false,
       isRecording: false,
       isPlayingCountDown: false,
-      countDownTimer: 3
+      countDownTimer: 3,
+      dialog: true
     }
   },
   mounted () {
@@ -216,6 +219,7 @@ export default {
 
       this.startCountDown().then(() => {
         this.isRecording = true
+        this.dialog = false
         this.recorder = RecordRTC(this.mediaStream, {
           type: 'video'
         })
