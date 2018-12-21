@@ -16,7 +16,8 @@ var path = require('path');
 router.post('/upload-video', function(req, res, next) {
   var form = new formidable.IncomingForm();
   var dir = process.env.DIR_UPLOADS_SPLIT;
-  form.uploadDir = path.join(__dirname, '..', dir);
+  var uploadDir = path.join(__dirname, '..', dir);
+  form.uploadDir = uploadDir;
   form.keepExtensions = true;
   form.maxFieldsSize = 10 * 1024 * 1024;
   form.maxFields = 1000;
@@ -25,7 +26,7 @@ router.post('/upload-video', function(req, res, next) {
   // parsing the formData to store the file
   form.parse(req, function(err, fields, files) {
     var file = util.inspect(files);
-    console.log(file);
+
     var fileName = file.split('path:')[1].split('\',')[0].split(dir)[1].toString().replace(/\\/g, '').replace(/\//g, '');
     var newFileName = fields.fileName
     var topic = fields.topic
@@ -38,14 +39,17 @@ router.post('/upload-video', function(req, res, next) {
     // make a dir for the topic if there is no folders with the name
     topic = sanitize(topic).replace(/\ /g, '_')
     var folderPath = process.env.DIR_UPLOADS + topic;
+    console.log('folderPath', folderPath);
     if (!fs.existsSync(folderPath)) {
       console.log('creating dir')
       fs.mkdirSync(folderPath)
     }
 
     // rename the file
-    var currentFilePath = process.env.DIR_UPLOADS + fileName
+    // var currentFilePath = process.env.DIR_UPLOADS + fileName
+    var currentFilePath = uploadDir + fileName
     var newFilePath = process.env.DIR_UPLOADS + topic + '/' + newFileName
+    console.log('newFilePath', newFilePath);
     if (fs.existsSync(currentFilePath)) {
       fs.renameSync(currentFilePath, newFilePath)
     } else {
@@ -54,7 +58,8 @@ router.post('/upload-video', function(req, res, next) {
 
     // respond to client
     // var fileURL = 'http://' + req.headers.host + '/uploads/' + topic + '/' + newFileName;
-    var fileURL = 'http://' + req.headers.host + '/' + topic + '/' + newFileName;
+    // var fileURL = 'http://' + req.headers.host + '/' + topic + '/' + newFileName;
+    var fileURL = 'http://' + req.headers.host + '/' + process.env.DIR_UPLOADS_SPLIT + topic + '/' + newFileName;
     console.log('fileURL: ', fileURL);
     res.json({fileURL: fileURL})
   });
@@ -105,7 +110,7 @@ router.get('/get-topics', function(req, res, next) {
     .fromFile(path.join(process.env.FILE_TOPICS))
     .on("end_parsed",function(jsonArrayObj){ //when parse finished, result will be emitted here.
       res.json({topics: jsonArrayObj});
-      console.log(jsonArrayObj); 
+      console.log(jsonArrayObj);
    })
 
 });

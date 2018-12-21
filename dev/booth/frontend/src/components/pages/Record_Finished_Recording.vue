@@ -18,13 +18,15 @@
           </p>
           <div class="video-area">
             <div class="video-wrapper">
-              <video
-                controls
-                autoplay
-                id="your-video"
-                :src="$store.state.uploadedFileURL"
-                @click="playStopVideo()"
-                />
+              <div class="video-cropper" :style="getVideoCropperSize">
+                <video
+                  autoplay
+                  id="your-video"
+                  :src="$store.state.uploadedFileURL"
+                  :style="getVideoPos"
+                  @click="playStopVideo()"
+                  />
+              </div>
             </div>
           </div>
           <p class="note">
@@ -60,6 +62,8 @@
 <script>
 import PageAside from '@/components/page-components/PageAside'
 import TextButton from '@/components/reusables/TextButton'
+import CONSTANTS from '@/../static/constants'
+
 export default {
   name: 'record-finished-recording',
   components: {
@@ -73,6 +77,23 @@ export default {
   },
   mounted () {
     this.videoElement = this.$el.querySelector('#your-video')
+  },
+  computed: {
+    getVideoCropperSize () {
+      const V = CONSTANTS.VIDEO
+      const ratio = V.PREVIEW_SIZE.height / V.CAPTURE_SIZE.height
+      return {
+        width: ((V.CAPTURE_SIZE.width - V.CROPPING_SIZE.width) * ratio) + 'px',
+        height: (V.CAPTURE_SIZE.height * ratio) + 'px'
+      }
+    },
+    getVideoPos () {
+      if (CONSTANTS.VIDEO.CROPPING_SIZE.side === 'left') {
+        return {left: 0}
+      } else if (CONSTANTS.VIDEO.CROPPING_SIZE.side === 'right') {
+        return {right: 0}
+      }
+    }
   },
   methods: {
     playStopVideo () {
@@ -152,9 +173,17 @@ main .video-wrapper {
   /* background-color: green; */
 }
 
+main .video-wrapper .video-cropper {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
 main video {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  width: 912px;
+  height: 513px;
   background-color: black;
   /* box-sizing: content-box;
   border-style: solid;

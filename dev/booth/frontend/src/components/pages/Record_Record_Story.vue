@@ -25,15 +25,19 @@
         </div>
         <div class="recording-element-container">
           <div class="video-wrapper">
-            <div v-show="isPlayingCountDown" class="animation-layer">
-              <p class="timer-label">
-                {{ countDownTimer }}
-              </p>
+            <div class="video-cropper" :style="getVideoCropperSize">
+              <div v-show="isPlayingCountDown" class="animation-layer">
+                <p class="timer-label">
+                  {{ countDownTimer }}
+                </p>
+              </div>
+              <div v-show="isRecording" class="recording-indicator">
+                RECORDING
+              </div>
+              <video
+                id="recording-video"
+                :style="getVideoPos"/>
             </div>
-            <div v-show="isRecording" class="recording-indicator">
-              RECORDING
-            </div>
-            <video id="recording-video"></video>
           </div>
           <div class="controller-wrapper">
             <div class="recording-timer-wrapper">
@@ -171,6 +175,21 @@ export default {
       return {
         width: width + 'px'
       }
+    },
+    getVideoCropperSize () {
+      const V = CONSTANTS.VIDEO
+      const ratio = V.PREVIEW_SIZE.height / V.CAPTURE_SIZE.height
+      return {
+        width: ((V.CAPTURE_SIZE.width - V.CROPPING_SIZE.width) * ratio) + 'px',
+        height: (V.CAPTURE_SIZE.height * ratio) + 'px'
+      }
+    },
+    getVideoPos () {
+      if (CONSTANTS.VIDEO.CROPPING_SIZE.side === 'left') {
+        return {left: 0}
+      } else if (CONSTANTS.VIDEO.CROPPING_SIZE.side === 'right') {
+        return {right: 0}
+      }
     }
   },
   methods: {
@@ -179,7 +198,7 @@ export default {
       this.captureUserMedia((stream) => {
         this.mediaStream = stream
 
-        this.videoElement.src = window.URL.createObjectURL(stream)
+        this.videoElement.srcObject = stream
         this.videoElement.play()
         this.videoElement.muted = true
         this.videoElement.controls = false
@@ -244,7 +263,7 @@ export default {
     captureUserMedia (successCallback) {
       var session = {
         audio: true,
-        video: CONSTANTS.VIDEO_SIZE
+        video: CONSTANTS.VIDEO.CAPTURE_SIZE
       }
       console.log('caotyring user media')
 
@@ -389,9 +408,15 @@ main .recording-element-container {
 
 main .video-wrapper {
   position: relative;
+  text-align: center;
   width: 912px;
   height: 513px;
-  /* background-color: green; */
+}
+
+main .video-wrapper .video-cropper {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
 }
 
 #audio-level-meter {
@@ -447,8 +472,9 @@ main .animation-layer {
 
 main video {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  width: 912px;
+  height: 513px;
   background-color: black;
   /* box-sizing: content-box;
   border-style: solid;

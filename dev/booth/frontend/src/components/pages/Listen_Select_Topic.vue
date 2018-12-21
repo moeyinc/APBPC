@@ -62,7 +62,7 @@
 <script>
 import PageAside from '@/components/page-components/PageAside'
 import TextButton from '@/components/reusables/TextButton'
-// import topics from '../../../static/topics.js'
+import topics from '../../../static/topics.js'
 export default {
   name: 'listen-select-topics',
   data () {
@@ -74,11 +74,11 @@ export default {
     PageAside, TextButton
   },
   created () {
-    this.$store.dispatch('getTopics')
-    .then((newTopics) => {
-      this.topics = newTopics
-    })
-    // this.topics = topics
+    // this.$store.dispatch('getTopics')
+    // .then((newTopics) => {
+    //   this.topics = newTopics
+    // })
+    this.topics = topics
   },
   computed: {
     getActiveTopicCount () {
