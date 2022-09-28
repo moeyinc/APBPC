@@ -146,8 +146,7 @@ export default {
       isPlayingCountDown: false,
       countDownTimer: 3,
       dialog: true,
-      inputLevel: 0,
-      date: new Date()
+      inputLevel: 0
     }
   },
   mounted () {
@@ -180,7 +179,8 @@ export default {
       this.captureUserMedia((stream) => {
         this.mediaStream = stream
 
-        this.videoElement.src = window.URL.createObjectURL(stream)
+        // this.videoElement.src = window.URL.createObjectURL(stream)
+        this.videoElement.srcObject = stream
         this.videoElement.play()
         this.videoElement.muted = true
         this.videoElement.controls = false
@@ -290,12 +290,12 @@ export default {
     /* stop recording */
     stopRecording () {
       this.isRecording = false
+      let date = new Date()
       if (this.$store.state.selectedTopic) {
         const D = this
         let callback = function () {
-          let date = this.date
           let blob = D.recorder.getBlob()
-          let fileName =  date.getMonth() + '_' + date.getDate() + '_' + date.getFullYear() + '_' + this.$store.state.selectedAge + '_' + Math.floor(Date.now() / 1000) + '.webm'
+          let fileName =  date.getMonth() + '_' + date.getDate() + '_' + date.getFullYear() + '_' + D.$store.state.selectedAge + '_' + Math.floor(Date.now() / 1000) + '.webm'
           D.$store.dispatch('uploadVideo', {blob: blob, fileName: fileName})
           .then(() => {
             D.jumpTo('recording-finish', {dir: 'right'})
