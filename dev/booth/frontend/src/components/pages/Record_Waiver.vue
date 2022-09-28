@@ -3,15 +3,19 @@
 ================================================== -->
 <template>
   <div class="page-wrapper">
+    <page-aside
+      :has-back-button="true"
+      :back-to="'home'"
+    />
     <header>
-      <h1 class="font-hoefler-regular">People and the Pine Bush</h1>
+      <h2>RECORD YOUR OWN STORY</h2>
     </header>
     <hr class="top-divider"/>
     <main>
       <div class="main-inner">
         <div>
-          <p class="lead-text">
-            Our community values the Pine Bush for many reasons. We encourage you to contribute your own story, or listen to the stories of others who enjoy the Pine Bush and what value it provides them.
+          <p class="lead-text" :style="{marginBottom: getMarginBottom}">
+            You must be 18+ years old to record your story. <br /> If you are under 18 years old, visit the front desk for a waiver and password.
           </p>
         </div>
         <div class="svg-button-container">
@@ -20,56 +24,65 @@
             :has-label="true"
             :width="'520px'"
             :height="'370px'"
-            :padding-top="'40px'"
-            :svg-wrapper-height="'180px'"
-            :svg-label-gap="'10px'"
+            :padding-top="'130px'"
             :label-wrapper-height="'100px'"
             :padding-bottom="'40px'"
-            :svg-width="'auto'"
-            :svg-height="'140px'"
-            :svg-src="require('@/assets/images/recording.svg')"
             :label-height="'100px'"
             :font="'bold 36px Arquitecta'"
             :line-height="'150px'"
             :letter-spacing="'3px'"
-            :text-content="'RECORD YOUR<br />OWN STORY'"
+            :text-content="'I AM 18+ YEARS OLD'"
             :regular-bg-color="'#47673b'"
             :regular-text-color="'#efdfd4'"
             :active-bg-color="'#efdfd4'"
             :active-text-color="'#47673b'"
             :border-radius="'50px'"
-            @clicked="jumpTo('recording-waiver', {dir: 'right'})"
+            @clicked="setOver18('Over_18')"
            />
            <svg-button
              class="svg-button"
              :has-label="true"
              :width="'520px'"
              :height="'370px'"
-             :padding-top="'40px'"
-             :svg-wrapper-height="'180px'"
-             :svg-label-gap="'10px'"
+             :padding-top="'100px'"
              :label-wrapper-height="'100px'"
              :padding-bottom="'40px'"
-             :svg-width="'auto'"
-             :svg-height="'120px'"
-             :svg-src="require('@/assets/images/playback.svg')"
              :label-height="'100px'"
              :font="'bold 36px Arquitecta'"
              :line-height="'150px'"
              :letter-spacing="'3px'"
-             :text-content="'LISTEN TO OTHER<br />VISITORS’ STORIES'"
+             :text-content="'I AM UNDER <BR /> 18 YEARS OLD <BR /> <BR />(PASSWORD REQUIRED)'"
              :regular-bg-color="'#47673b'"
              :regular-text-color="'#efdfd4'"
              :active-bg-color="'#efdfd4'"
              :active-text-color="'#47673b'"
              :border-radius="'50px'"
-             @clicked="jumpTo('listening-topics', {dir: 'right'})"
+             @clicked="setUnder18('Waiver')"
             />
         </div>
       </div>
     </main>
     <hr class="bottom-divider"/>
     <footer>
+      <div class="container">
+        <p class="font-hoefler-italic footer-text">
+          Not recording a video today? Listen to other visitors' stories:
+        </p>
+        <text-button
+          class="text-button"
+          :width="'350px'"
+          :height="'50px'"
+          :border-radius="'15px'"
+          :font="'bold 30px Arquitecta'"
+          :letter-spacing="'3px'"
+          :text-content="'VISITORS’ STORIES'"
+          :regular-bg-color="'#47673b'"
+          :regular-text-color="'#efdfd4'"
+          :active-bg-color="'#efdfd4'"
+          :active-text-color="'#47673b'"
+          @clicked="jumpTo('listening-topics'), {dir: 'right'}"
+         />
+      </div>
     </footer>
   </div>
 </template>
@@ -81,14 +94,31 @@
 <script>
 import SvgButton from '@/components/reusables/SvgButton'
 import TextButton from '@/components/reusables/TextButton'
+import PageAside from '@/components/page-components/PageAside'
+
 export default {
-  name: 'home',
+  name: 'record-waiver',
   components: {
-    SvgButton, TextButton
+    SvgButton, TextButton, PageAside
   },
-  created () {
-    this.$store.commit('resetTopic')
-    this.$store.commit('resetAge')
+  computed: {
+    getMarginBottom () {
+      if (this.getActiveTopicCount >= 7) {
+        return '30px'
+      } else if (this.getActiveTopicCount <= 6) {
+        return '50px'
+      }
+    }
+  },
+  methods: {
+    setOver18 (age) {
+      this.$store.commit('setAge', {age: age})
+      this.jumpTo('recording-topics', {dir: 'right'})
+    },
+    setUnder18 (age) {
+      this.$store.commit('setAge', {age: age})
+      this.jumpTo('recording-password', {dir: 'right'})
+    }
   }
 }
 </script>
@@ -107,23 +137,25 @@ header {
   /* background-color: darkgreen; */
 }
 
-header h1 {
-  padding-top: 80px;
-  font-size: 110px;
+header h2 {
+  padding-top: 45px;
+  font-size: 55px;
+  letter-spacing: 3px;
+  font-weight: bold;
   text-align: center;
 }
 
 hr.top-divider {
   background-color: #efdfd4;
   position: absolute;
-  top: 230px;
+  top: 135px;
   left: 200px;
   width: 1520px;
 }
 
 main {
   position: absolute;
-  top: 230px;
+  top: 130px;
   left: 200px;
   width: 1520px;
   height: 650px;
@@ -142,6 +174,7 @@ main p.lead-text {
 }
 
 main .svg-button-container {
+  padding-top: 3%;
   width: 100%;
   text-align: center;
 }
@@ -178,7 +211,7 @@ footer .container {
 
 footer .footer-text {
   display: inline-block;
-  font-size: 40px;
+  font-size: 30px;
   margin-right: 40px;
 }
 

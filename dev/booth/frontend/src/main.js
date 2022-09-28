@@ -7,7 +7,13 @@ import Vuex from 'vuex'
 import _store from './store'
 import mixin from '@/mixins/global'
 import VueSimpleSVG from 'vue-simple-svg'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCircle as faCircle2 } from '@fortawesome/free-regular-svg-icons'
 
+library.add(faCircle, faCircle2)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(Vuex)
 Vue.mixin(mixin)
 Vue.use(VueSimpleSVG)

@@ -8,7 +8,8 @@ const state = {
   selectedTopic: '',
   uploadedFileURL: '',
   currentView: 'a',
-  nextView: 'b'
+  nextView: 'b',
+  selectedAge: ''
 }
 
 /* =================================================
@@ -18,6 +19,10 @@ const mutations = {
   resetTopic (state) {
     console.log('resetting the selected topic')
     state.selectedTopic = ''
+  },
+  resetAge (state) {
+    console.log('resetting the selected age')
+    state.selectedAge = ''
   },
   setTopic (state, {topic}) {
     console.log('set selectedTopic: ', topic)
@@ -31,6 +36,10 @@ const mutations = {
     let keep = state.currentView
     state.currentView = state.nextView
     state.nextView = keep
+  },
+  setAge (state, {age}) {
+    console.log('set selectedAge: ', age)
+    state.selectedAge = age
   }
 }
 
