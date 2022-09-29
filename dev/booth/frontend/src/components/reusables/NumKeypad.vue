@@ -1,7 +1,7 @@
 <template>
   <div :class="'keypad-dialog'" >
     <div class="keypad-container" >
-      <template v-for="n in 10" >
+      <template v-for="n in 10">
         <div
         class="keypad-flex  keypad-class"
         >
@@ -10,8 +10,22 @@
             class="keypad"
             :ripple="true"
           >
-            <div v-if="n < 10" class="keypad-center" :style="getButtonStyle" @click="onInput(n)" >{{ n }}</div>
-            <div v-if="n == 10" class="keypad-center" :style="getButtonStyle"  @click="onInput(0)">0</div>
+          <div v-if="n < 11" class="keypad-center">
+            <text-button
+              class="text-button"
+              :width="'70px'"
+              :height="'70px'"
+              :border-radius="'15px'"
+              :font="'bold 36px Arquitecta'"
+              :letter-spacing="'3px'"
+              :text-content="getNum(n)"
+              :regular-bg-color="'#47673b'"
+              :regular-text-color="'#efdfd4'"
+              :active-bg-color="'#efdfd4'"
+              :active-text-color="'#47673b'"
+              @clicked="clicked(n)"
+            />
+          </div>
           </div>
         </div>
       </template>
@@ -20,11 +34,19 @@
 </template>
 
 <script>
+import TextButton from '@/components/reusables/TextButton'
+
 export default {
   name: "numeric-keypad",
-  data: () => ({
-    n: 0
-  }),
+  data () {
+    return {
+      isActive: false,
+      n: 0
+    }
+  },
+  components: {
+    TextButton
+  },
   props: {
     keypadClass: { type: String, default: "keypad-class", required: false },
     onInput: { type: Function, required: true },
@@ -38,6 +60,8 @@ export default {
     letterSpacing: String,
     regularBgColor: String,
     regularTextColor: String,
+    activeBgColor: String,
+    activeTextColor: String,
     bodyHeight: {
       type: String,
       default: '100%'
@@ -82,6 +106,32 @@ export default {
     getTextColor () {
       return this.isActive ? this.activeTextColor : this.regularTextColor
     }
+  },
+  methods: {
+    // switch the active value to change the background color
+    toggle () {
+      this.isActive = !this.isActive
+    },
+    // reset the active value when leaving your mouse
+    resetClick () {
+      this.isActive = false
+    },
+    // emit an event to the parent
+    clicked (n) {
+      this.$emit('clicked')
+      if (n < 10) {
+        this.onInput(n)
+      } else if (n === 10) {
+        this.onInput(0)
+      }
+    },
+    getNum (n) {
+      if (n < 10) {
+        return n
+      } else if (n === 10) {
+        return 0
+      }
+    }
   }
 }
 </script>
@@ -117,11 +167,7 @@ export default {
 }
 
 .keypad-center {
-  transform: translateY(-50%);
-  padding: 20%;
-  text-align: center;
-  vertical-align: center;
+  transform: translateY(-25%);
 }
-
 
 </style>

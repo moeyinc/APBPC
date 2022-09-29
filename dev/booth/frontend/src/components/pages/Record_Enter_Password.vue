@@ -81,6 +81,8 @@ import PageAside from '@/components/page-components/PageAside'
 import NumericKeypad from '@/components/reusables/NumKeypad'
 import PasswordBlock from '@/components/reusables/PasswordBlock'
 
+let data = require("../../data.json")
+
 export default {
   name: 'record-enter-password',
   components: {
@@ -90,7 +92,7 @@ export default {
     password: "",
     passwordLen: 0,
     maxLength: 4,
-    defaultPW: '3456',
+    defaultPW: data.default,
     anim: ""
   }),
   methods: {
@@ -168,7 +170,7 @@ hr.top-divider {
 
 main {
   position: absolute;
-  top: 150px;
+  top: 140px;
   left: 200px;
   width: 1520px;
   height: 650px;
