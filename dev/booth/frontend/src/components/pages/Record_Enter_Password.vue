@@ -15,7 +15,7 @@
       <div class="main-inner">
         <div>
           <p class="lead-text" :style="{marginBottom: getMarginBottom}">
-            Staff: Enter the 4-digit password below if visitor has completed a waiver.
+            Staff: Enter the 4-digit password below if the visitor has completed a waiver.
           </p>
 
         </div>

@@ -11,7 +11,7 @@
       <div class="main-inner">
         <div>
           <p class="lead-text">
-            Our community values the Pine Bush for many reasons. We encourage you to contribute your own story, or listen to the stories of others who enjoy the Pine Bush and what value it provides them.
+            Our community values the Pine Bush for many reasons. We encourage you to contribute your own story, or listen to the stories of others who enjoy the Pine Bush.
           </p>
         </div>
         <div class="svg-button-container">
