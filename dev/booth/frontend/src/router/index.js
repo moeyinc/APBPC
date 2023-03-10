@@ -8,6 +8,8 @@ import RecordFinishedRecording from '@/components/pages/Record_Finished_Recordin
 import ListenSelectTopic from '@/components/pages/Listen_Select_Topic'
 import ListenOtherStories from '@/components/pages/Listen_Other_Stories'
 import SendYourStory from '@/components/pages/Send_Your_Story'
+import RecordWaiver from '@/components/pages/Record_Waiver'
+import RecordEnterPassword from '@/components/pages/Record_Enter_Password'
 
 Vue.use(Router)
 
@@ -19,6 +21,8 @@ const router = new Router({
       component: Parent,
       children: [
         {path: '', name: 'home', component: Home},
+        {path: 'recording/waiver', name: 'recording-waiver', component: RecordWaiver},
+        {path: 'recording/password', name: 'recording-password', component: RecordEnterPassword},
         {path: 'recording/topics', name: 'recording-topics', component: RecordSelectTopic},
         {path: 'recording/start', name: 'recording-start', component: RecordRecordStory},
         {path: 'recording/finish', name: 'recording-finish', component: RecordFinishedRecording},
@@ -47,16 +51,24 @@ const router = new Router({
 //       }
 //     },
 //     {
-//       path: '/recording/topics',
-//       name: 'recording-topics',
-//       componensts: {
-//         a: RecordSelectTopic,
-//         b: RecordSelectTopic
+//       path: '/recording/waiver',
+//       name: 'recording-waiver',
+//       components: {
+//         a: RecordWaiver,
+//         b: RecordWaiver
+//       }
+//     },
+//    {
+//       path: '/recording/password',
+//       name: 'recording-password',
+//       components: {
+//         a: RecordEnterPassword,
+//         b: RecordEnterPassword
 //       }
 //     },
 //     {
-//       path: '/recording/start',
-//       name: 'recording-start',
+//       path: '/recording/topics',
+//       name: 'recording-topics',
 //       components: {
 //         a: RecordRecordStory,
 //         b: RecordRecordStory

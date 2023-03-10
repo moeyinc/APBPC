@@ -5,7 +5,7 @@
   <div class="page-wrapper">
     <page-aside
       :has-back-button="true"
-      :back-to="'home'"
+      :back-to="'recording-waiver'"
     />
     <header>
       <h2>RECORD YOUR OWN STORY</h2>
@@ -62,7 +62,7 @@
 <script>
 import PageAside from '@/components/page-components/PageAside'
 import TextButton from '@/components/reusables/TextButton'
-// import topics from '../../../static/topics.js'
+// import newTopics from '../../../static/topics.js'
 export default {
   name: 'record-select-topics',
   data () {
@@ -78,6 +78,7 @@ export default {
     .then((newTopics) => {
       this.topics = newTopics
     })
+    // this.topics = newTopics
   },
   computed: {
     getActiveTopicCount () {
