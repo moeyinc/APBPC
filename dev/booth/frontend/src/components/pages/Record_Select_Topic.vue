@@ -15,7 +15,7 @@
       <div class="main-inner">
         <div>
           <p class="lead-text" :style="{marginBottom: getMarginBottom}">
-            Select from the topics below to hear other people's thoughts and opinions on the Pine Bush.
+            Select from the topics below and record your story of the Pine Bush.
           </p>
         </div>
         <div class="text-button-container">
@@ -64,7 +64,7 @@ import PageAside from '@/components/page-components/PageAside'
 import TextButton from '@/components/reusables/TextButton'
 // import newTopics from '../../../static/topics.js'
 export default {
-  name: 'record-select-topics',
+  name: 'recording-topics',
   data () {
     return {
       topics: []

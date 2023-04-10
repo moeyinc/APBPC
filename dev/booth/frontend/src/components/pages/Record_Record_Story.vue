@@ -129,9 +129,10 @@ import TextButton from '@/components/reusables/TextButton'
 import RecordInstructionDialog from '@/components/reusables/RecordInstructionDialog'
 import RecordRTC from 'recordrtc'
 import CONSTANTS from '@/../static/constants'
+import MyWorkletProcessor from '@/worklet/worklet-processor'
 
 export default {
-  name: 'record-record-story',
+  name: 'recording-start',
   components: {
     PageAside, CircularVisualRecordingTimer, TextButton, RecordInstructionDialog
   },
@@ -174,52 +175,74 @@ export default {
     }
   },
   methods: {
-    initVideo () {
+    async initVideo () {
       this.videoElement = document.getElementById('recording-video')
-      this.captureUserMedia((stream) => {
+
+      await this.captureUserMedia((stream) => {
         this.mediaStream = stream
 
-        // this.videoElement.src = window.URL.createObjectURL(stream)
         this.videoElement.srcObject = stream
         this.videoElement.play()
         this.videoElement.muted = true
         this.videoElement.controls = false
-
         this.initAudioLevelMeter(stream)
-
         this.isStreamReady = true
       })
     },
-    initAudioLevelMeter (stream) {
+    async initAudioLevelMeter (stream) {
+      // let audioContext = new AudioContext()
+      // let analyser = audioContext.createAnalyser()
+      // let microphone = audioContext.createMediaStreamSource(stream)
+      // let javascriptNode = audioContext.createScriptProcessor(2048, 1, 1)
+
+      // analyser.smoothingTimeConstant = 0.8
+      // analyser.fftSize = 1024
+
+      // microphone.connect(analyser)
+      // analyser.connect(javascriptNode)
+      // javascriptNode.connect(audioContext.destination)
+
+      // // let canvasContext = document.getElementById('audio-level-meter').getContext("2d")
+
+      // const D = this
+      // javascriptNode.onaudioprocess = function () {
+      //   let array = new Uint8Array(analyser.frequencyBinCount)
+      //   analyser.getByteFrequencyData(array)
+      //   let values = 0
+
+      //   let length = array.length
+      //   for (let i = 0; i < length; i++) {
+      //     values += (array[i])
+      //   }
+
+      //   let average = values / length
+      //   D.inputLevel = average // / 100
+      // }
+
+      /* Using AudioWorklet to process audio instead of the above (deprecated) ScriptNodeProcessor */
       let audioContext = new AudioContext()
-      let analyser = audioContext.createAnalyser()
-      let microphone = audioContext.createMediaStreamSource(stream)
-      let javascriptNode = audioContext.createScriptProcessor(2048, 1, 1)
-
-      analyser.smoothingTimeConstant = 0.8
-      analyser.fftSize = 1024
-
-      microphone.connect(analyser)
-      analyser.connect(javascriptNode)
-      javascriptNode.connect(audioContext.destination)
-
-      // let canvasContext = document.getElementById('audio-level-meter').getContext("2d")
-
       const D = this
-      javascriptNode.onaudioprocess = function () {
-        let array = new Uint8Array(analyser.frequencyBinCount)
-        analyser.getByteFrequencyData(array)
-        let values = 0
 
-        let length = array.length
-        for (let i = 0; i < length; i++) {
-          values += (array[i])
+      // Adding an AudioWorkletProcessor
+      await audioContext.audioWorklet.addModule(MyWorkletProcessor)
+
+      // Creating AudioWorkletNode sending context and name of processor registered in my-worklet-processor.js
+      // eslint-disable-next-line
+      let myWorkletNode = new AudioWorkletNode(audioContext, 'my-worklet-processor')
+      let microphone = audioContext.createMediaStreamSource(stream)
+
+      // getting volume from the AudioWorkletProcessor
+      myWorkletNode.port.onmessage  = event => {
+        let _volume = 0
+        if (event.data.volume) {
+          _volume = event.data.volume
+          D.inputLevel = _volume * 1000
         }
-
-        let average = values / length
-        D.inputLevel = average // / 100
       }
+        // connect microphone to the AudioWorkletNode and output from audioContext
+      microphone.connect(myWorkletNode).connect(audioContext.destination)
     },
+    /* adjust font */
     adjustFontSize () {
       let containerWidth = this.$el.querySelector('.selected-topic-wrapper').clientWidth
       let contentWidth = this.$el.querySelector('.question-text').clientWidth
@@ -242,20 +265,20 @@ export default {
       reduceFontSize(containerWidth, contentWidth, reduceFontSize)
     },
     /* reusable getUserMedia */
-    captureUserMedia (successCallback) {
+    async captureUserMedia (successCallback) {
       var session = {
         audio: true,
         video: CONSTANTS.VIDEO_SIZE
       }
-      console.log('caotyring user media')
+      console.log('capturing user media')
 
-      navigator.mediaDevices.getUserMedia(session)
+      await (navigator.mediaDevices.getUserMedia(session) || navigator.getUserMedia(session) || navigator.webkitGetUserMedia(session) || navigator.mozGetUserMedia(session))
       .then(successCallback)
       .catch((error) => {
         // alert('Unable to capture the camera. Please make sure the camera is connected and reboot the computer.')
         console.error('Unable to capture the camera. Please make sure the camera is connected and reboot the computer.')
         console.error(error)
-        this.jumpTo('home', {dir: 'home'})
+        // this.jumpTo('home', {dir: 'home'})
       })
     },
     /* start recording */

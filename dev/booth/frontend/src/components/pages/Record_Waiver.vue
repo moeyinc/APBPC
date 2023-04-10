@@ -97,7 +97,7 @@ import TextButton from '@/components/reusables/TextButton'
 import PageAside from '@/components/page-components/PageAside'
 
 export default {
-  name: 'record-waiver',
+  name: 'recording-waiver',
   components: {
     SvgButton, TextButton, PageAside
   },

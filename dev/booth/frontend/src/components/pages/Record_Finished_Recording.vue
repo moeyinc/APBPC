@@ -24,7 +24,7 @@
                 id="your-video"
                 :src="$store.state.uploadedFileURL"
                 @click="playStopVideo()"
-                />
+                ></video>
             </div>
           </div>
           <p class="note">
@@ -61,7 +61,7 @@
 import PageAside from '@/components/page-components/PageAside'
 import TextButton from '@/components/reusables/TextButton'
 export default {
-  name: 'record-finished-recording',
+  name: 'recording-finish',
   components: {
     PageAside, TextButton
   },

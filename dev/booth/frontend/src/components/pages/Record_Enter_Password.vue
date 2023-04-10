@@ -84,7 +84,7 @@ import PasswordBlock from '@/components/reusables/PasswordBlock'
 let data = require("../../data.json")
 
 export default {
-  name: 'record-enter-password',
+  name: 'recording-password',
   components: {
     SvgButton, TextButton, PageAside, NumericKeypad, PasswordBlock
   },
